@@ -3,19 +3,33 @@ import { useLocation } from "react-router-dom";
 import LineCanvas from "./LineCanvas";
 import RegionCanvas from "./RegionCanvas";
 import axios from "axios";
+import socketIOClient from 'socket.io-client';
 
 function AnalyticsConfig() {
 
   useEffect(()=>{
     getConfig()
+    socket.on('connect', () => {
+      console.log('Connected to the server via WebSocket');
+    });
   },[])
-
 
   const [formData, setFormData] = useState({
     sourceId:"",
     analytics:""
   });
   const [imageData,setImageData]=useState(null)
+
+
+  const ENDPOINT = 'http://localhost:5000'; // Replace with your Flask server's URL
+  const socket = socketIOClient(ENDPOINT);
+
+  socket.on('kafka_msg_data', (data) => {
+    // Convert the received BSON encoded data to a JavaScript object
+    console.log(data);
+    setImageData(data.base64_url)
+    
+  });
 
   const handleChangeSource = (e) => {
     const { name, value } = e.target;
@@ -36,11 +50,11 @@ function AnalyticsConfig() {
   };
 
   async function getImage(){
-    const url = "http://localhost:5000/get_image";
+    const url = "http://localhost:5000/custom"; // ORG : http://localhost:5000/get_image
     try {
       const response = await axios.get(url);
-      const base64Image = response.data.image_data;
-      setImageData(base64Image)
+      const base64Image = response.data.base64_url;
+      console.log("base64Image : ", base64Image);
     } catch (error) {
       // Handle errors here
       console.error("Axios error:", error);
