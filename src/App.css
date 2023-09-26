@@ -181,7 +181,7 @@ li{list-style: none;}
   overflow-x: scroll;
 }
 .main_page{width: 100%;}
-.wrapper{display: flex;justify-content: center;width: 100%;}
+.wrapper{display: flex;align-items: center;width: 100%;flex-direction: column;}
 th{   top: 0;  position: sticky;}
 td,th {
   padding: 5px;
@@ -204,3 +204,62 @@ tbody tr:hover {  background-color: rgba(255, 255, 255, 0.3);}
 } */
 
 /*---------------------- Event Monitor Page------------------------------- */
+
+
+/* Camera Config css */
+.camera_config{padding-left: 3%;}
+.page_title{margin-top: 90px;}
+
+.camera_form{
+  margin-top: 25px;
+  margin-left: 1%;
+  
+}
+.camera_form>select{
+  font-size: 17px;
+  padding: 5px;
+  padding-left: 5px;
+  padding-right: 150px;
+  border-radius: 5px;
+}
+/* ---------------------------------------------- */
+.cam_config_sub_form{margin-top: 25px;margin-left: 12px;display: flex;flex-direction: column;gap:15px}
+.cam_config_sub_form>button{
+  text-align: center;
+  font-size: 17.5px;
+  padding: 5px;
+  width: 420px;
+  border-radius: 5px;
+  font-size: 17px;
+  border: none;
+  background-color: #3f51b5;
+  color: white;
+}
+.sub_form_label_input{display: flex;gap:20px;align-items: center;}
+.sub_form_label_input>label{padding: 5px; width: 210px;font-size: 18px;}
+.sub_form_label_input>input{  padding: 3px;padding-left: 11px;padding-right: 11px;  border-radius: 3px;border: #999;}
+.sub_form_label_input>select{  padding: 3px; border-radius: 2px;border: #999;  font-size: 17px;  padding: 3px;  padding-left: 5px;  padding-right: 53px;  border-radius: 5px;text-indent: 5px;}
+.sub_form_label_input>button{  padding: 3px;padding-left: 30px;padding-right: 30px;  border-radius: 3px;border: #999;}
+.configContainer{margin-top: 20px;margin-left: 40px;}
+/* ---------DASHBOARD----------- */
+
+.dash-label{
+  width: 250px !important;
+}
+.dashboard{margin-top: 85px;padding-left: 50px;}
+.dashboard>form>button{width: 462px;}
+/* ---------DASHBOARD----------- */
+.center-align{
+  display: flex;
+  justify-content: center;
+}
+/* ------------------------EVENT MONITOR-------------- */
+.event_monitor_form_container{
+  margin-top: 92px;
+  margin-left: 60px;
+  margin-bottom: 50px;
+}
+.event_monitor_form_container>form>div>label{
+  width: 150px;
+}
+.event_monitor_form_container>form>button{width: 355px;}

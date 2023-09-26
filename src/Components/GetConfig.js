@@ -25,9 +25,12 @@ const GetConfig = () => {
 console.log(getConfig)
   return (
     <div>
-      <h1>This is a config file</h1>
-      <button onClick={getRequest}>Get Me Data</button>
-      <div className="configContainer">{getConfig ? (<ReactJson data={getConfig} />) : (<p>Loading data...</p>)}</div>
+      <form className="cam_config_sub_form">
+        <button onClick={getRequest}>Get Data</button>
+      </form>
+      <div className="configContainer">{getConfig ? (<ReactJson data={getConfig} />) : (<p></p>)}</div>
+
+
     </div>
   );
 };

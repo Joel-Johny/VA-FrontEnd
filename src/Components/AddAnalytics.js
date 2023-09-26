@@ -48,9 +48,8 @@ function AddAnalytics() {
 
   return (
     <div>
-      <h2>Form to Add Analytics</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form onSubmit={handleSubmit}  className="cam_config_sub_form">
+        <div className="sub_form_label_input">
           <label >Source Id:</label>
           <input
             type="number"
@@ -61,7 +60,7 @@ function AddAnalytics() {
           />
         </div>
 
-        <div>
+        <div className="sub_form_label_input">
           <label >Analytics : </label>
           <select
             onChange={handleChange}

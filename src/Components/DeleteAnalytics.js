@@ -48,9 +48,8 @@ function DeleteAnalytics() {
 
   return (
     <div>
-      <h2>Form to Remove Analytics</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form onSubmit={handleSubmit} className="cam_config_sub_form">
+        <div className="sub_form_label_input">
           <label htmlFor="sourceId">Source Id:</label>
           <input
             type="number"
@@ -61,7 +60,7 @@ function DeleteAnalytics() {
           />
         </div>
 
-        <div>
+        <div className="sub_form_label_input" >
           <label htmlFor="sourceFrameRate">Analytics : </label>
           <select
             onChange={handleChange}
@@ -77,7 +76,7 @@ function DeleteAnalytics() {
           </select>
         </div>
 
-        <button type="submit">Submit</button>
+        <button type="submit">SUBMIT</button>
       </form>
     </div>
   );

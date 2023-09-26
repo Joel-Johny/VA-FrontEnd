@@ -31,14 +31,6 @@ function AnalyticsConfig() {
     
   });
 
-  const handleChangeSource = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
   const handleChangeAnalytics = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -60,6 +52,16 @@ function AnalyticsConfig() {
       console.error("Axios error:", error);
     }
   }
+
+  const handleChangeSource = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+
 
   async function getConfig(){
     const url = "http://localhost:5000/ac/get_config";
@@ -94,7 +96,7 @@ function AnalyticsConfig() {
         <h2>Analytics Configuration</h2>
           <form onSubmit={handleSubmit} className="analytics_form">
             <div className="label_input_container">
-              <label>Source Id:</label>
+              <label>Source Id : </label>
               <select
                 onChange={handleChangeSource}
                 value={formData.sourceId}

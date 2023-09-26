@@ -66,11 +66,12 @@ function Dashboard() {
   }
   return (
     <div className="main_page">
+      <div className="dashboard">
       <h2>Welcome to Our Website</h2>
-      <p>This is the Dashboard page</p>
-      <form onSubmit={handleSubmitAddress}>
-        <div>
-          <label>Analytics Server Address :</label>
+
+      <form onSubmit={handleSubmitAddress} className="cam_config_sub_form flex-col">
+        <div className="sub_form_label_input">
+          <label className="dash-label">Analytics Server Address :</label>
           <input
             type="url"
             name="analytics_server_ip"
@@ -80,8 +81,8 @@ function Dashboard() {
           />
         </div>
 
-        <div>
-          <label>Message Broker Address : </label>
+        <div className="sub_form_label_input">
+          <label className="dash-label">Message Broker Address : </label>
           <input
             type="url"
             name="message_broker_address"
@@ -89,8 +90,9 @@ function Dashboard() {
             onChange={handleChangeAddress}
             required
           />
-
-          <label>Streaming Server IP : </label>
+        </div>
+        <div className="sub_form_label_input">
+          <label className="dash-label">Streaming Server IP : </label>
           <input
             type="url"
             name="streaming_server_ip"
@@ -98,10 +100,12 @@ function Dashboard() {
             onChange={handleChangeAddress}
             required
           />
-          <br />
-          <input type="submit" value="Connect" />
         </div>
+        <button type="submit">SUBMIT</button>
+
       </form>
+      </div>
+
     </div>
   );
 }

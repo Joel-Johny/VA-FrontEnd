@@ -44,9 +44,8 @@ function DeleteSource() {
 
   return (
     <div>
-      <h2>Form to delete source</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form onSubmit={handleSubmit} className="cam_config_sub_form">
+        <div className="sub_form_label_input">
           <label >Source Id:</label>
           <input
             type="text"

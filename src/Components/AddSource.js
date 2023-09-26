@@ -54,10 +54,10 @@ function AddSource() {
 
 
   return (
-    <div>
-      <h2>Form to add source</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
+    <div >
+
+      <form onSubmit={handleSubmit} className="cam_config_sub_form">
+        <div className="sub_form_label_input">
           <label htmlFor="sourceId">Source Id:</label>
           <input
             type="number"
@@ -67,7 +67,7 @@ function AddSource() {
             required
           />
         </div>
-        <div>
+        <div className="sub_form_label_input">
           <label htmlFor="sourceName">Source Name : </label>
           <input
             type="text"
@@ -78,7 +78,7 @@ function AddSource() {
           />
         </div>
 
-        <div>
+        <div className="sub_form_label_input">
           <label htmlFor="rtspUrl">RTSP URL : </label>
           <input
             type="url"
@@ -89,7 +89,7 @@ function AddSource() {
           />
         </div>
 
-        <div>
+        <div className="sub_form_label_input">
           <label htmlFor="username">Username : </label>
           <input
             type="text"
@@ -100,7 +100,7 @@ function AddSource() {
           />
         </div>
 
-        <div>
+        <div className="sub_form_label_input">
           <label htmlFor="password">Password : </label>
           <input
             type="password"
@@ -111,7 +111,7 @@ function AddSource() {
           />
         </div>
 
-        <div>
+        <div className="sub_form_label_input">
           <label htmlFor="sourceFrameRate">Source Frame Rate : </label>
           <input
             type="number"
@@ -122,7 +122,7 @@ function AddSource() {
           />
         </div>
 
-        <div>
+        <div className="sub_form_label_input">
           <label htmlFor="analytics">Analytics : </label>
 
           <select
@@ -139,7 +139,7 @@ function AddSource() {
           </select>
         </div>
 
-        <button type="submit">Submit</button>
+        <button type="submit">SUBMIT</button>
       </form>
 
 
