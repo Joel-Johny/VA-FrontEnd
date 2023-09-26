@@ -173,8 +173,7 @@ function RegionCanvas({base64Image,formData}) {
         className="canvas"
         style={{
           backgroundImage:
-          // `url(data:image/jpeg;base64,${base64Image})`,
-            'url("https://viso.ai/wp-content/uploads/2021/02/people-counting-computer-vision-background-1.jpg")',
+          `url("${base64Image}")`,  
           backgroundRepeat: "no-repeat",
           backgroundSize: '100% 100%',
         }}
