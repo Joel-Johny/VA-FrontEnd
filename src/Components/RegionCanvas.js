@@ -1,6 +1,8 @@
 import React, { useRef, useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-function RegionCanvas() {
+function RegionCanvas({base64Image,formData}) {
   const canvasRef = useRef(null);
   const [rcoord, setRcoord] = useState([]);
   const [regions, setRegions] = useState([]);
@@ -25,7 +27,6 @@ function RegionCanvas() {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
-    console.log(color)
     ctx.beginPath();
     ctx.moveTo(objectCoord[0].x, objectCoord[0].y); 
     ctx.lineTo(objectCoord[1].x, objectCoord[1].y);
@@ -107,30 +108,58 @@ function RegionCanvas() {
       }
   };
 
-  const coords = () => {
+  const handleSubmit = () => {
     const canvas = canvasRef.current;
-    let coordinates={}; // Declare a variable to store the coordinates
-    regions.forEach((objectCoord,index)=>{
-      coordinates[`region`+(index+1)]=objectCoord
-
-    })
+    let roi_List = [];
+    roi_List = regions.map((objectCoord, index) => {
+      console.log(objectCoord);
+      return {
+        type: "region",
+        name: `region${index + 1}`,
+        vertex1:[objectCoord[0].x,objectCoord[0].y],
+        vertex2:[objectCoord[1].x,objectCoord[1].y],
+        vertex3:[objectCoord[2].x,objectCoord[2].y],
+        vertex4:[objectCoord[3].x,objectCoord[3].y],
+        // start: [objectCoord.startPoint.x, objectCoord.startPoint.y],
+        // end: [objectCoord.endPoint.x, objectCoord.endPoint.y]
+      };
+    });
+    
    
 
-    /* preparing time stamp string */
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
-    const currentDateTime = new Date();
-    const formattedDate = currentDateTime.toLocaleDateString(undefined, options);
+    // /* preparing time stamp string */
+    // const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+    // const currentDateTime = new Date();
+    // const formattedDate = currentDateTime.toLocaleDateString(undefined, options);
 
     const json = {
-      imgHeight: canvas.height,
-      imgWidth: canvas.width,
-      timestamp: formattedDate,
-      coords: coordinates // Use the variable "coordinates" here
+      cameraid: formData.sourceId,
+      analytics: formData.analytics,
+      roi: roi_List
     };
-
-    const stringJson = JSON.stringify(json);
     console.log(json);
+    postData(json)
   };
+
+  async function postData() {
+
+    const url = "http://localhost:5000/ac/set_config";
+    try {
+      const response = await axios.post(url, formData);
+
+      console.log(response);
+
+      const responseData = response.data; // Axios already parses the JSON response
+
+      // Handle the JSON response data here
+      console.log("Response data:", responseData);
+      toast(responseData.status_message,{position:"bottom-center"})
+    } catch (error) {
+      // Handle errors here
+      console.error("Axios error:", error);
+      toast.error(error,{position: "bottom-center"})
+    }
+  }
 
   return (
     <div className="regionCanvas">
@@ -144,6 +173,7 @@ function RegionCanvas() {
         className="canvas"
         style={{
           backgroundImage:
+          // `url(data:image/jpeg;base64,${base64Image})`,
             'url("https://viso.ai/wp-content/uploads/2021/02/people-counting-computer-vision-background-1.jpg")',
           backgroundRepeat: "no-repeat",
           backgroundSize: '100% 100%',
@@ -154,7 +184,7 @@ function RegionCanvas() {
         <span>Please draw region in the Canvas</span>
         <div className="canvas-btn-container">
           <button onClick={handleErase}>Erase</button>
-          <button onClick={coords}>Submit</button>
+          <button onClick={handleSubmit}>Submit</button>
         </div>
       </div>
     </div>

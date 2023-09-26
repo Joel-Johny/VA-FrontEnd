@@ -5,19 +5,17 @@ import RegionCanvas from "./RegionCanvas";
 import axios from "axios";
 
 function AnalyticsConfig() {
-  const location = useLocation();
 
   useEffect(()=>{
     getConfig()
   },[])
-  console.log(location);
-
 
 
   const [formData, setFormData] = useState({
     sourceId:"",
     analytics:""
   });
+  const [imageData,setImageData]=useState(null)
 
   const handleChangeSource = (e) => {
     const { name, value } = e.target;
@@ -33,12 +31,24 @@ function AnalyticsConfig() {
       ...formData,
       [name]: value,
     });
-
-    // getImage()
+    console.log("Calling getImage Image making a get request....")
+    getImage()
   };
 
+  async function getImage(){
+    const url = "http://localhost:5000/get_image";
+    try {
+      const response = await axios.get(url);
+      const base64Image = response.data.image_data;
+      setImageData(base64Image)
+    } catch (error) {
+      // Handle errors here
+      console.error("Axios error:", error);
+    }
+  }
+
   async function getConfig(){
-    const url = "http://localhost:5000/get_config";
+    const url = "http://localhost:5000/ac/get_config";
     try {
       const response = await axios.get(url);
 
@@ -48,7 +58,7 @@ function AnalyticsConfig() {
       setFormData({
         ...formData,
         analytics: responseData.analytics,
-        sourceId: responseData.sourceId,
+        sourceId: responseData.source_id,
       });
       // Handle the JSON response data here
       console.log("Response data:", responseData);
@@ -66,7 +76,7 @@ function AnalyticsConfig() {
   return (
         
     <div className="analytics">
-      <div className="analytics_form_container">
+      <div className="analytics_form_container ">
         <h2>Analytics Configuration</h2>
           <form onSubmit={handleSubmit} className="analytics_form">
             <div className="label_input_container">
@@ -100,11 +110,14 @@ function AnalyticsConfig() {
                 <option value="Crowd">Crowd</option>
               </select>
             </div>
+
           </form>
       </div>
 
       <div class="canvas_container">
-        {formData.analytics==="Line Crossing" ? <LineCanvas />:(formData.analytics==="Crowd"?<RegionCanvas/>:(formData.analytics==="Loitering"?<RegionCanvas/>:null))}
+        {/* <img src={`data:image/jpeg;base64,${imageData}`}/> */}
+        {formData.analytics==="Line Crossing"
+         ? <LineCanvas base64Image={imageData} formData={formData}/>:(formData.analytics==="Crowd"?<RegionCanvas base64Image={imageData} formData={formData}/>:(formData.analytics==="Loitering"?<RegionCanvas base64Image={imageData} formData={formData}/>:null))}
       </div>
     </div>
   );

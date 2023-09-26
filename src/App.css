@@ -98,7 +98,7 @@ li{list-style: none;}
   display: flex;
   justify-content: space-between;
   width: 100%;
-  padding-left: 50px;
+  padding-left: 5%;
   padding-top: 50px;
   padding-right: 40px;
 }
@@ -123,7 +123,7 @@ li{list-style: none;}
 .analytics_form{
   margin-top: 20px;
 }
-.canvas_container{margin-top: 45px;margin-right: 100px;}
+.canvas_container{margin-top: 45px;margin-right: 10%;}
 .canvas-info-container{display: flex;align-items: center;justify-content: space-between;margin-top: 20px;}
 .canvas-info-container>span{font-size: 16px;}
 .lineCanvas,.regionCanvas{
@@ -145,7 +145,8 @@ li{list-style: none;}
   gap: 20px;
 }
 .canvas{height: 640px;width: 640px;}
-/* MEDIA QUERY */
+
+/* --------------MEDIA QUERY -----------------------*/
 
 @media only screen and (max-width: 1360px) {
   
@@ -201,6 +202,5 @@ tbody tr:hover {  background-color: rgba(255, 255, 255, 0.3);}
 /* ::-webkit-scrollbar-thumb {
   background-color: transparent;
 } */
-
 
 /*---------------------- Event Monitor Page------------------------------- */

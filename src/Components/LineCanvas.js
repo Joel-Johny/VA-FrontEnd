@@ -1,13 +1,16 @@
 import React, { useRef, useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-function LineCanvas() {
+function LineCanvas({ base64Image,formData }) {
   const canvasRef = useRef(null);
+  console.log(base64Image);
 
   // For lines
   const [startPoint, setStartPoint] = useState(null);
   const [endPoint, setEndPoint] = useState(null);
   const [lines, setLines] = useState([]);
-  const [lineColors, setLineColors] = useState(["red","green","blue"]); // Define colors for lines
+  const [lineColors, setLineColors] = useState(["red", "green", "blue"]); // Define colors for lines
 
   const getNextLineColor = () => {
     // Get the next color in the list, and cycle back to the first if needed
@@ -28,7 +31,6 @@ function LineCanvas() {
   };
 
   const previewLine = (event) => {
-
     if (lines.length < 3) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
@@ -70,50 +72,74 @@ function LineCanvas() {
   };
 
   const draw = () => {
-
     if (startPoint && endPoint && lines.length < 3) {
       const newLine = { startPoint, endPoint };
       // without this also running how tf? need to research//
       const nextColor = getNextLineColor();
       drawLine(startPoint, endPoint, nextColor);
-      // -----------------------------------------------// 
+      // -----------------------------------------------//
       setLines((oldList) => [...oldList, newLine]);
       setStartPoint(null);
       setEndPoint(null);
     }
   };
 
-  const coords = () => {
-    const coordinates = {};
-    const canvas = canvasRef.current;
-    lines.forEach((objectCoord, index) => {
-      coordinates[`line${index + 1}`] = objectCoord;
+  const handleSubmit = () => {
+    let roi_List = [];
+    roi_List=lines.map((objectCoord, index) => {
+      console.log(objectCoord)
+      return{
+        type: "line",
+        name: `line${index + 1}`,
+        start:[objectCoord.startPoint.x,objectCoord.startPoint.y],
+        end:[objectCoord.endPoint.x,objectCoord.endPoint.y]
+      }
+      // coordinates[`line${index + 1}`] = objectCoord;
     });
 
-    const options = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      second: "numeric",
-    };
+    // const options = {
+    //   weekday: "long",
+    //   year: "numeric",
+    //   month: "long",
+    //   day: "numeric",
+    //   hour: "numeric",
+    //   minute: "numeric",
+    //   second: "numeric",
+    // };
 
-    const currentDateTime = new Date();
-    const formattedDate = currentDateTime.toLocaleDateString(undefined, options);
+    // const currentDateTime = new Date();
+    // const formattedDate = currentDateTime.toLocaleDateString(
+    //   undefined,
+    //   options
+    // );
 
     const json = {
-      imgHeight: canvas.height,
-      imgWidth: canvas.width,
-      timestamp: formattedDate,
-      coords: coordinates,
+      cameraid: formData.sourceId,
+      analytics: formData.analytics,
+      roi: roi_List
     };
-
-    const stringJson = JSON.stringify(json);
-    console.log(json);
+    console.log(json)
+    postData(json)
   };
+  async function postData() {
 
+    const url = "http://localhost:5000/ac/set_config";
+    try {
+      const response = await axios.post(url, formData);
+
+      console.log(response);
+
+      const responseData = response.data; // Axios already parses the JSON response
+
+      // Handle the JSON response data here
+      console.log("Response data:", responseData);
+      toast(responseData.status_message,{position:"bottom-center"})
+    } catch (error) {
+      // Handle errors here
+      console.error("Axios error:", error);
+      toast.error(error,{position: "bottom-center"})
+    }
+  }
   return (
     <div className="lineCanvas">
       <canvas
@@ -126,20 +152,19 @@ function LineCanvas() {
         className="canvas"
         style={{
           backgroundImage:
+            // `url(data:image/jpeg;base64,${base64Image})`,
             'url("https://viso.ai/wp-content/uploads/2021/02/people-counting-computer-vision-background-1.jpg")',
           backgroundRepeat: "no-repeat",
-          backgroundSize: '100% 100%',
+          backgroundSize: "100% 100%",
         }}
       ></canvas>
       <div className="canvas-info-container">
         <span>Please draw line in the Canvas</span>
         <div className="canvas-btn-container">
           <button onClick={handleErase}>Erase</button>
-          <button onClick={coords}>Submit</button>
+          <button onClick={handleSubmit}>Submit</button>
         </div>
       </div>
-
-
     </div>
   );
 }
