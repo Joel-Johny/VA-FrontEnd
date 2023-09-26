@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 
 function LineCanvas({ base64Image,formData }) {
   const canvasRef = useRef(null);
-  console.log(base64Image);
 
   // For lines
   const [startPoint, setStartPoint] = useState(null);

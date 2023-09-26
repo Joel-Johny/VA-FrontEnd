@@ -81,7 +81,7 @@ function AddSource() {
         <div>
           <label htmlFor="rtspUrl">RTSP URL : </label>
           <input
-            type="url"
+            // type="url"
             name="rtsp_url"
             value={formData.rtsp_url}
             onChange={handleChange}
