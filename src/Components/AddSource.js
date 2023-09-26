@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+
 import axios from "axios";
 function AddSource() {
   const [formData, setFormData] = useState({
@@ -26,23 +28,30 @@ function AddSource() {
   };
   async function postData() {
 
-  const url = "http://localhost:5000/add_new_source";
-  try {
-    const response = await axios.post(url, formData);
+    const url = "http://localhost:5000/add_new_source";
+    try {
+      const response = await axios.post(url, formData);
 
-    console.log(response);
+      console.log(response);
 
-    const responseData = response.data; // Axios already parses the JSON response
+      const responseData = response.data; // Axios already parses the JSON response
 
-    // Handle the JSON response data here
-    console.log("Response data:", responseData);
-  } catch (error) {
-    // Handle errors here
-    console.error("Axios error:", error);
+      // Handle the JSON response data here
+      console.log("Response data:", responseData);
+      toast(responseData.status_message,{position:"bottom-center"})
+    } catch (error) {
+      // Handle errors here
+      console.error("Axios error:", error);
+      toast.error(error,{position: "bottom-center"})
+    }
   }
-}
 
-  
+  // const showToast = () => {
+  //   toast("This is a toast message!",{    position: "bottom-center", // or "bottom-left" for left-aligned
+  // });
+
+  // };
+
 
   return (
     <div>
@@ -132,7 +141,10 @@ function AddSource() {
 
         <button type="submit">Submit</button>
       </form>
-      <div></div>
+
+
+      {/* <button onClick={showToast}>Show Toast</button> */}
+
     </div>
   );
 }

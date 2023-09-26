@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import React, { useState } from "react";
 import axios from "axios";
 
@@ -34,10 +35,14 @@ function DeleteAnalytics() {
 
     // Handle the JSON response data here
     console.log("Response data:", responseData);
+    toast(responseData.status_message,{position:"bottom-center"})
+
   } 
   catch (error) {
     // Handle errors here
     console.error("Axios error:", error);
+    toast.error(error,{position: "bottom-center"})
+
   }
 }
 
