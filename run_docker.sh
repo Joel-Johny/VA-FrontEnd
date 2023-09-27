@@ -1,0 +1,1 @@
+sudo docker run -it --rm --net=host -v $PWD/src:/app/src va-frontend

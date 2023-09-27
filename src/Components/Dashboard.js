@@ -13,18 +13,17 @@ function Dashboard() {
 
     async function fetchData() {
       try {
-        const response = await fetch(ENDPOINT);
-
-        if (!response.ok) throw new Error("Network response was not ok");
-
-        const data = await response.json();
+        const response = await axios.get(ENDPOINT);
+        
+        // if (!response.statusText) throw new Error("Network response was not ok");
+        // const data = await response.json();
+        
         // setting to state
-        console.log(data);
         setAddress((prevAddress) => ({
           ...prevAddress,
-          analytics_server_ip: data.analytics_server_ip,
-          message_broker_address: data.message_broker_address,
-          streaming_server_ip:data.streaming_server_ip
+          analytics_server_ip: response.data.analytics_server_ip,
+          message_broker_address: response.data.message_broker_address,
+          streaming_server_ip:response.data.streaming_server_ip
         }));
       } catch (error) {
         console.error("Fetch error:", error);
