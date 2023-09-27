@@ -7,6 +7,8 @@ import fakeData from "./mock.json";
 function Event() {
   const [messages, setMessages] = useState([]);
   const data = React.useMemo(() => fakeData, []);
+  const [sourceOptions, setSourceOptions] = useState(null);
+
   const columns = React.useMemo(
     () => [
       {
@@ -42,6 +44,8 @@ function Event() {
   // const socketRef = useRef(null); // Ref for socket
 
   useEffect(() => {
+    getConfig();
+
     const ENDPOINT = "http://localhost:5000/";
     const socketRef = socketIOClient(ENDPOINT);
     // Listen for 'kafka_msg_data' events
@@ -85,7 +89,27 @@ function Event() {
       .then((res) => console.log(res.data))
       .catch((e) => console.log(e));
   };
+  async function getConfig() {
+    const url = "http://localhost:5000/get_config";
+    try {
+      const response = await axios.get(url);
 
+      const responseData = response.data; // Axios already parses the JSON response
+      const jsonString = JSON.parse(responseData.status_message);
+      const get_list = jsonString.status_message.map((object) => {
+        return `SourceId : ${object.source_id} , Name : ${object.source_name}`;
+        // return object.source_id
+      });
+      // console.log(get_list)
+      console.log(formData.sourceId);
+      setSourceOptions(get_list);
+      console.log(formData.sourceId);
+      // Handle the JSON response data here
+    } catch (error) {
+      // Handle errors here
+      console.error("Axios error:", error);
+    }
+  }
   async function postData() {
     const url = "http://localhost:5000/event_monitor";
     try {
@@ -107,21 +131,28 @@ function Event() {
     <div className="main_page">
 
       <div className="event_monitor_form_container">
-      <h2>Event Monitor </h2>
-
-      <form onSubmit={handleSubmit} className="cam_config_sub_form">
+        <h2>Event Monitor</h2>
+        <form onSubmit={handleSubmit} className="cam_config_sub_form">
         <div className="sub_form_label_input">
           <label>Source Id:</label>
-          <input
-            type="number"
-            name="source_id"
-            value={formData.source_id}
+          <select
             onChange={handleChange}
-            required
-          />
+            value={formData.sourceId}
+            name="sourceId"
+          >
+            <option value="null" hidden>
+              Select Source ID
+            </option>
+            {sourceOptions &&
+              sourceOptions.map((sourceId, index) => (
+                <option key={index} value={sourceId}>
+                  {sourceId}
+                </option>
+              ))}
+          </select>
         </div>
 
-        <div className="sub_form_label_input">
+        <div className="sub_form_label_input"> 
           <label>Analytics : </label>
           <select
             onChange={handleChange}
@@ -139,8 +170,9 @@ function Event() {
 
         <button type="submit">SUBMIT</button>
         <button onClick={stopService}>STOP</button>
-      </form>
+        </form>
       </div>
+
       <div className="wrapper">
         <div className="table_container">
           <table {...getTableProps()}>

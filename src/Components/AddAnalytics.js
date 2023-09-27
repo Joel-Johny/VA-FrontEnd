@@ -48,7 +48,7 @@ function AddAnalytics() {
 
   return (
     <div>
-      <form onSubmit={handleSubmit}  className="cam_config_sub_form">
+      <form onSubmit={handleSubmit} className="cam_config_sub_form">
         <div className="sub_form_label_input">
           <label >Source Id:</label>
           <input

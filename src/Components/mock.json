@@ -1,4 +1,5 @@
-[{"id":1,"first_name":"Millicent","last_name":"Whatham","email":"mwhatham0@comsenz.com","gender":"Female","university":"Samarkand State University"},
+[
+    {"id":1,"first_name":"Millicent","last_name":"Whatham","email":"mwhatham0@comsenz.com","gender":"Female","university":"Samarkand State University"},
 {"id":2,"first_name":"Siward","last_name":"Amberger","email":"samberger1@behance.net","gender":"Male","university":"Institute of Industrial Electronics Engineering"},
 {"id":3,"first_name":"Sheree","last_name":"Madeley","email":"smadeley2@google.com","gender":"Female","university":"Kateb Institute of Higher Education"},
 {"id":4,"first_name":"Egor","last_name":"Downing","email":"edowning3@nymag.com","gender":"Male","university":"Universidad de Concepción del Uruguay"},
@@ -266,7 +267,6 @@
 {"id":266,"first_name":"Zea","last_name":"Hatherleigh","email":"zhatherleigh7d@e-recht24.de","gender":"Female","university":"Pace University  Pleasantville/Briarcliff"},
 {"id":267,"first_name":"Kristian","last_name":"Denisevich","email":"kdenisevich7e@epa.gov","gender":"Male","university":"Zhongnan University of Finance and Economics"},
 {"id":268,"first_name":"Tobiah","last_name":"Casale","email":"tcasale7f@webs.com","gender":"Male","university":"Majan University College"},
-{"id":269,"first_name":"Sarene","last_name":"Sedgeworth","email":"ssedgeworth7g@answers.com","gender":"Female","university":"Evangelische Fachhochschule Ludwigshafen Hochschule für Sozial- und Gesundheitswesen"},
 {"id":270,"first_name":"Pedro","last_name":"Seville","email":"pseville7h@statcounter.com","gender":"Male","university":"Wisconsin School of Professional Psychology"},
 {"id":271,"first_name":"Clio","last_name":"Dilawey","email":"cdilawey7i@state.gov","gender":"Polygender","university":"Seoul National University of Technology"},
 {"id":272,"first_name":"Maribeth","last_name":"Witchell","email":"mwitchell7j@sphinn.com","gender":"Female","university":"Fasa Faculty of Medical Sciences"},
@@ -313,7 +313,6 @@
 {"id":313,"first_name":"Jemie","last_name":"Chill","email":"jchill8o@wunderground.com","gender":"Female","university":"Mountains of the Moon University"},
 {"id":314,"first_name":"Vivien","last_name":"Longman","email":"vlongman8p@free.fr","gender":"Female","university":"King's University College"},
 {"id":315,"first_name":"Hercule","last_name":"Haxbie","email":"hhaxbie8q@phpbb.com","gender":"Male","university":"Moorhead State University"},
-{"id":316,"first_name":"Jessee","last_name":"Mudge","email":"jmudge8r@vimeo.com","gender":"Male","university":"Technische Fachhochschule Georg Agricola für Rohstoff, Energie und, Umwelt zu Bochum"},
 {"id":317,"first_name":"Conn","last_name":"Diehn","email":"cdiehn8s@vkontakte.ru","gender":"Male","university":"Université de Technologie de Troyes"},
 {"id":318,"first_name":"Mariejeanne","last_name":"Quimby","email":"mquimby8t@google.com.br","gender":"Female","university":"University of Education"},
 {"id":319,"first_name":"Nels","last_name":"Rable","email":"nrable8u@mlb.com","gender":"Male","university":"Ibn Sina University"},

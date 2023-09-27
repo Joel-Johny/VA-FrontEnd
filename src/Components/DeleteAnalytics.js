@@ -5,46 +5,40 @@ import axios from "axios";
 function DeleteAnalytics() {
   const [formData, setFormData] = useState({
     source_id: "",
-    analytics: ""
+    analytics: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    postData()
-
+    postData();
   };
 
   async function postData() {
+    const url = "http://localhost:5000/delete_inference";
+    try {
+      const response = await axios.delete(url, { data: formData });
 
-  const url = "http://localhost:5000/delete_inference";
-  try {
-    const response = await axios.delete(url, { data : formData});
-    
+      console.log(response);
 
-    console.log(response);
+      const responseData = response.data; // Axios already parses the JSON response
 
-    const responseData = response.data; // Axios already parses the JSON response
-
-    // Handle the JSON response data here
-    console.log("Response data:", responseData);
-    toast(responseData.status_message,{position:"bottom-center"})
-
-  } 
-  catch (error) {
-    // Handle errors here
-    console.error("Axios error:", error);
-    toast.error(error,{position: "bottom-center"})
-
+      // Handle the JSON response data here
+      console.log("Response data:", responseData);
+      toast(responseData.status_message, { position: "bottom-center" });
+    } catch (error) {
+      // Handle errors here
+      console.error("Axios error:", error);
+      toast.error(error, { position: "bottom-center" });
+    }
   }
-}
 
   return (
     <div>
@@ -60,7 +54,7 @@ function DeleteAnalytics() {
           />
         </div>
 
-        <div className="sub_form_label_input" >
+        <div className="sub_form_label_input">
           <label htmlFor="sourceFrameRate">Analytics : </label>
           <select
             onChange={handleChange}
@@ -76,7 +70,7 @@ function DeleteAnalytics() {
           </select>
         </div>
 
-        <button type="submit">SUBMIT</button>
+        <button type="submit">Submit</button>
       </form>
     </div>
   );

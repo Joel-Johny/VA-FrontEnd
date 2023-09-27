@@ -10,24 +10,22 @@ function AddSource() {
     username: "",
     password: "",
     source_rate: "",
-    analytics: ""
+    analytics: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    postData()
-
+    postData();
   };
   async function postData() {
-
     const url = "http://localhost:5000/add_new_source";
     try {
       const response = await axios.post(url, formData);
@@ -38,11 +36,11 @@ function AddSource() {
 
       // Handle the JSON response data here
       console.log("Response data:", responseData);
-      toast(responseData.status_message,{position:"bottom-center"})
+      toast(responseData.status_message, { position: "bottom-center" });
     } catch (error) {
       // Handle errors here
       console.error("Axios error:", error);
-      toast.error(error,{position: "bottom-center"})
+      toast.error(error, { position: "bottom-center" });
     }
   }
 
@@ -52,10 +50,8 @@ function AddSource() {
 
   // };
 
-
   return (
-    <div >
-
+    <div>
       <form onSubmit={handleSubmit} className="cam_config_sub_form">
         <div className="sub_form_label_input">
           <label htmlFor="sourceId">Source Id:</label>
@@ -139,12 +135,10 @@ function AddSource() {
           </select>
         </div>
 
-        <button type="submit">SUBMIT</button>
+        <button type="submit">Submit</button>
       </form>
 
-
       {/* <button onClick={showToast}>Show Toast</button> */}
-
     </div>
   );
 }

@@ -10,28 +10,28 @@ function Dashboard() {
 
   useEffect(() => {
     const ENDPOINT = "http://127.0.0.1:5000/";
-
     async function fetchData() {
       try {
         const response = await axios.get(ENDPOINT);
-        
+  
         // if (!response.statusText) throw new Error("Network response was not ok");
         // const data = await response.json();
-        
+  
         // setting to state
         setAddress((prevAddress) => ({
           ...prevAddress,
           analytics_server_ip: response.data.analytics_server_ip,
           message_broker_address: response.data.message_broker_address,
-          streaming_server_ip:response.data.streaming_server_ip
+          streaming_server_ip: response.data.streaming_server_ip,
         }));
       } catch (error) {
         console.error("Fetch error:", error);
       }
     }
-
     fetchData();
   }, []);
+
+  
 
   const handleChangeAddress = (e) => {
     const { name, value } = e.target;
@@ -66,45 +66,47 @@ function Dashboard() {
   return (
     <div className="main_page">
       <div className="dashboard">
-      <h2>Welcome to Our Website</h2>
+        <h2>Welcome to VA Webapp</h2>
+        <form
+          onSubmit={handleSubmitAddress}
+          className="cam_config_sub_form flex-col"
+        >
+          <div className="sub_form_label_input">
+            <label className="dash-label">Analytics Server Address :</label>
+            <input
+              type="url"
+              name="analytics_server_ip"
+              value={address.analytics_server_ip}
+              onChange={handleChangeAddress}
+              required
+            />
+          </div>
 
-      <form onSubmit={handleSubmitAddress} className="cam_config_sub_form flex-col">
-        <div className="sub_form_label_input">
-          <label className="dash-label">Analytics Server Address :</label>
-          <input
-            type="url"
-            name="analytics_server_ip"
-            value={address.analytics_server_ip}
-            onChange={handleChangeAddress}
-            required
-          />
-        </div>
+          <div className="sub_form_label_input">
+            <label className="dash-label">Message Broker Address : </label>
+            <input
+              type="url"
+              name="message_broker_address"
+              value={address.message_broker_address}
+              onChange={handleChangeAddress}
+              required
+            />
+          </div>
 
-        <div className="sub_form_label_input">
-          <label className="dash-label">Message Broker Address : </label>
-          <input
-            type="url"
-            name="message_broker_address"
-            value={address.message_broker_address}
-            onChange={handleChangeAddress}
-            required
-          />
-        </div>
-        <div className="sub_form_label_input">
-          <label className="dash-label">Streaming Server IP : </label>
-          <input
-            type="url"
-            name="streaming_server_ip"
-            value={address.streaming_server_ip}
-            onChange={handleChangeAddress}
-            required
-          />
-        </div>
-        <button type="submit">SUBMIT</button>
+          <div className="sub_form_label_input">
+            <label className="dash-label">Streaming Server IP : </label>
+            <input
+              type="url"
+              name="streaming_server_ip"
+              value={address.streaming_server_ip}
+              onChange={handleChangeAddress}
+              required
+            />
+          </div>
 
-      </form>
+          <button type="submit">SUBMIT</button>
+        </form>
       </div>
-
     </div>
   );
 }
