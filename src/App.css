@@ -124,7 +124,7 @@ li{list-style: none;}
 .analytics_form{
   margin-top: 20px;
 }
-.canvas_container{margin-top: 45px;margin-right: 10%;}
+.canvas_container{margin-top: 45px;margin-right: 1.15%;margin-left: 1%;}
 .canvas-info-container{display: flex;align-items: center;justify-content: space-between;margin-top: 20px;}
 .canvas-info-container>span{font-size: 16px;}
 .lineCanvas,.regionCanvas{
@@ -147,39 +147,11 @@ li{list-style: none;}
 }
 .canvas{height: 640px;width: 640px;}
 
-/* --------------MEDIA QUERY -----------------------*/
+.line_region_row_table{margin-top: 35px;}
 
-@media only screen and (max-width: 1360px) {
-  
-.analytics{
- flex-direction: column;
+.line_region_row_table_edit_input{padding: 0;}
+.line_region_row_table_edit_input>input{padding:12px 30px; border: none;background-color: transparent; font-weight: 600;  font-size: 16px;  font-family: 'Ubuntu'; text-align: center;}
 
-}
-
-.canvas_container {
-  margin-top: 25px;
-  margin-left: 0;
-  margin-right: 0;
-  justify-content: center;
-
-}
-.canvas-info-container>span{padding-right: 50px;}
-.lineCanvas{align-items: center;}
-.regionCanvas{  align-items: center;}
-
-
-/* MQ for table */
-
-.table_container{  width: 760px; padding: 0 !important;}
-
-}
-
-@media only screen and (min-width: 1280px) {
-  
-  /* MQ for table */
-  .table_container{  width: 91%; padding: 0 !important;}
-  
-  }
 /*---------------------- Analytics Page------------------------------- */
 
 /*---------------------- Event Monitor Page------------------------------- */
@@ -187,6 +159,7 @@ li{list-style: none;}
   height: 500px;
   overflow-y: scroll;
   overflow-x: scroll;
+  max-width: 1240px;
 }
 .main_page{width: 100%;}
 .wrapper{display: flex;justify-content: center;width: 100%;}
@@ -195,10 +168,10 @@ td,th {
   padding: 12px;
   /* background-color: rgba(255, 255, 255, 0.1); */
   background-color: rgba(255, 255, 255, 0.2);
-  font-size: larger;
+  font-size: large;
   font-weight: 600;
   font-family: 'Ubuntu', sans-serif;
-  color: rgb(70, 57, 57);
+  text-align: center;
 }
 td{
   padding-left: 30px;
@@ -276,7 +249,7 @@ tbody tr:hover {
 .sub_form_label_input{display: flex;gap:20px;align-items: center;}
 .sub_form_label_input>label{padding: 5px; width: 210px;font-size: 18px;}
 .sub_form_label_input>input{  padding: 3px;padding-left: 11px;padding-right: 11px;  border-radius: 3px;border: #999;}
-.sub_form_label_input>select{  padding: 3px; border-radius: 2px;border: #999;  font-size: 17px;  padding: 3px;  padding-left: 5px;  padding-right: 53px;  border-radius: 5px;text-indent: 5px;}
+.sub_form_label_input>select{  padding: 3px; border-radius: 2px;border: #999;  font-size: 17px;  padding: 3px;  padding-left: 5px;  padding-right: 53px;  border-radius: 5px;text-indent: 0px;}
 .sub_form_label_input>button{  padding: 3px;padding-left: 30px;padding-right: 30px;  border-radius: 3px;border: #999;}
 .configContainer{margin-top: 20px;margin-left: 10px;}
 /* ---------DASHBOARD----------- */
@@ -306,3 +279,38 @@ tbody tr:hover {
   text-indent: 2px;
 }
 .event_monitor_form_container>form>button{width: 355px;}
+
+/* --------------MEDIA QUERY -----------------------*/
+
+
+@media only screen and (max-width: 1360px) {
+  
+  .analytics{
+   flex-direction: column;
+  
+  }
+  
+  .canvas_container {
+    margin-top: 25px;
+    margin-left: 0;
+    margin-right: 0;
+    justify-content: center;
+  
+  }
+  .canvas-info-container>span{padding-right: 50px;}
+  .lineCanvas{align-items: center;}
+  .regionCanvas{  align-items: center;}
+  
+  .table_container{  width: 768px; padding: 0 !important;}
+  
+  .line_region_row_table{display: flex;justify-content: center;}
+  /* MQ for table */
+    
+  }
+  
+  @media only screen and (max-width: 1540px) {
+    
+    /* MQ for table */
+    .table_container{  width: 1000px; padding: 0 !important;}
+    
+    }

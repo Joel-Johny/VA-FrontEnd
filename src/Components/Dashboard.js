@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 function Dashboard() {
   const [address, setAddress] = useState({
@@ -25,6 +26,7 @@ function Dashboard() {
           streaming_server_ip: response.data.streaming_server_ip,
         }));
       } catch (error) {
+        toast(error.message,{position:"bottom-center"})
         console.error("Fetch error:", error);
       }
     }
@@ -58,9 +60,13 @@ function Dashboard() {
 
       // Handle the JSON response data here
       console.log("Response data:", responseData);
+      toast(responseData,{position:"bottom-center"})
+
     } catch (error) {
       // Handle errors here
       console.error("Axios error:", error);
+      toast(error.message,{position:"bottom-center"})
+
     }
   }
   return (

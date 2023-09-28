@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import ReactJson from "react-json-pretty";
-import { useTable } from "react-table";
 import GetConfigTable from "./GetConfigTable"
 
 const GetConfig = () => {
@@ -12,7 +11,9 @@ const GetConfig = () => {
     try {
       const response = await axios.get(url);
       const responseData = response.data; // Axios already parses the JSON response
-      setGetConfig(responseData.status_message);
+      // setGetConfig(responseData.status_message);
+      setGetConfig(JSON.parse(responseData.status_message));
+
       // Handle the JSON response data here
 
       console.log("Response data:", responseData.status_message);

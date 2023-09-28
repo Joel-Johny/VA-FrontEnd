@@ -1,69 +1,82 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import socketIOClient from "socket.io-client";
 import axios from "axios";
-import { useTable } from "react-table";
-import fakeData from "./mock.json";
+import { useTable, usePagination } from "react-table";
 
 function Event() {
   const [messages, setMessages] = useState([]);
-  const data = React.useMemo(() => fakeData, []);
   const [sourceOptions, setSourceOptions] = useState(null);
 
   const columns = React.useMemo(
     () => [
       {
+        Header: "Sr.",
+        accessor: (row, index) => index + 1, // Add 1 to index to start from 1
+      },
+      {
         Header: "Source",
-        accessor: "id",
+        accessor: "source_id",
       },
       {
         Header: "Name",
-        accessor: "first_name",
+        accessor: "source_name",
       },
       {
         Header: "Frame",
-        accessor: "last_name",
+        accessor: "frame_id",
       },
       {
         Header: "Timestamp",
-        accessor: "email",
+        accessor: "timestamp",
       },
       {
         Header: "Time",
-        accessor: "gender",
+        accessor: "date",
       },
       {
-        Header: "University",
-        accessor: "university",
+        Header: "Crowd Detected?",
+        accessor: "crowd_detected",
+        Cell: ({ value }) => <span>{value ? "Yes" : "No"}</span>,
+      },
+      {
+        Header: "Person in ROI",
+        accessor: "person_in_roi",
       },
     ],
     []
   );
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data });
-  // const socketRef = useRef(null); // Ref for socket
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    page, // Instead of 'rows', we use 'page' for paginated data
+    prepareRow,
+    state: { pageIndex, pageSize }, // State for pagination
+    gotoPage, // Function to go to a specific page
+    nextPage, // Function to go to the next page
+    previousPage, // Function to go to the previous page
+    canNextPage, // Boolean indicating if there is a next page
+    canPreviousPage, // Boolean indicating if there is a previous page
+    pageCount,
+  } = useTable(
+    { columns, data: messages, initialState: { pageIndex: 0, pageSize: 50 } },
+    //data : messages; here messages also columns is expected to be a list hence you have to initalize it to a empty [] and no null
+    usePagination
+  );
+  const socketRef = useRef(null); // Ref for socket
+  const ENDPOINT = "http://localhost:5000/";
 
   useEffect(() => {
     getConfig();
 
-    const ENDPOINT = "http://localhost:5000/";
-    const socketRef = socketIOClient(ENDPOINT);
-    // Listen for 'kafka_msg_data' events
-    socketRef.on("kafka_msg_data", (data) => {
-      // Handle the received data (e.g., update the messages state)
-      console.log(data);
-      setMessages((prevMessages) => [...prevMessages, data]);
-    });
-
-    // Clean up the interval and disconnect the WebSocket when the component unmounts
     return () => {
-      socketRef.disconnect();
       stopService();
     };
   }, []);
 
   const [formData, setFormData] = useState({
-    source_id: "",
+    sourceId: "",
     analytics: "",
   });
 
@@ -80,14 +93,22 @@ function Event() {
     postData();
   };
   const stopService = () => {
-    axios
-      .get(`http://localhost:5000/event_monitor`, {
-        params: {
-          stop_kafka_consumer: true,
-        },
-      })
-      .then((res) => console.log(res.data))
-      .catch((e) => console.log(e));
+    if (socketRef.current) {
+      axios
+        .get(`http://localhost:5000/event_monitor`, {
+          params: {
+            stop_kafka_consumer: true,
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          socketRef.current.disconnect();
+        })
+        .catch((e) => {
+          console.log(e);
+          socketRef.current.disconnect();
+        });
+    }
   };
   async function getConfig() {
     const url = "http://localhost:5000/get_config";
@@ -117,6 +138,15 @@ function Event() {
 
       console.log(response);
 
+      if (response.status) {
+        socketRef.current = socketIOClient(ENDPOINT);
+        // Listen for 'kafka_msg_data' events
+        socketRef.current.on("kafka_msg_data_for_em", (data) => {
+          // Handle the received data (e.g., update the messages state)
+          console.log(data);
+          setMessages((prevMessages) => [...prevMessages, data]);
+        });
+      }
       const responseData = response.data; // Axios already parses the JSON response
 
       // Handle the JSON response data here
@@ -129,79 +159,125 @@ function Event() {
 
   return (
     <div className="main_page">
-
       <div className="event_monitor_form_container">
         <h2>Event Monitor</h2>
         <form onSubmit={handleSubmit} className="cam_config_sub_form">
-        <div className="sub_form_label_input">
-          <label>Source Id:</label>
-          <select
-            onChange={handleChange}
-            value={formData.sourceId}
-            name="sourceId"
-          >
-            <option value="null" hidden>
-              Select Source ID
-            </option>
-            {sourceOptions &&
-              sourceOptions.map((sourceId, index) => (
-                <option key={index} value={sourceId}>
-                  {sourceId}
-                </option>
-              ))}
-          </select>
-        </div>
+          <div className="sub_form_label_input">
+            <label>Source Id:</label>
+            <select
+              onChange={handleChange}
+              value={formData.sourceId}
+              name="sourceId"
+            >
+              <option value="null" hidden>
+                Select Source ID
+              </option>
+              <option value="1">1</option>
+              {sourceOptions &&
+                sourceOptions.map((sourceId, index) => (
+                  <option key={index} value={sourceId}>
+                    {sourceId}
+                  </option>
+                ))}
+            </select>
+          </div>
 
-        <div className="sub_form_label_input"> 
-          <label>Analytics : </label>
-          <select
-            onChange={handleChange}
-            value={formData.analytics}
-            name="analytics"
-          >
-            <option value="null" hidden>
-              Select Mode
-            </option>
-            <option value="Loitering">Loitering </option>
-            <option value="Line Crossing">Line Crossing</option>
-            <option value="Crowd">Crowd</option>
-          </select>
-        </div>
+          <div className="sub_form_label_input">
+            <label>Analytics : </label>
+            <select
+              onChange={handleChange}
+              value={formData.analytics}
+              name="analytics"
+            >
+              <option value="null" hidden>
+                Select Mode
+              </option>
+              <option value="Loitering">Loitering </option>
+              <option value="Line Crossing">Line Crossing</option>
+              <option value="Crowd">Crowd</option>
+            </select>
+          </div>
 
-        <button type="submit">SUBMIT</button>
-        <button onClick={stopService}>STOP</button>
+          <button type="submit">SUBMIT</button>
+          <button onClick={stopService}>STOP</button>
         </form>
       </div>
 
-      <div className="wrapper">
-        <div className="table_container">
-          <table {...getTableProps()}>
-            <thead>
-              {headerGroups.map((headerGroup) => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                  {headerGroup.headers.map((column) => (
-                    <th {...column.getHeaderProps()}>
-                      {column.render("Header")}
-                    </th>
+      {messages.length > 0 && (
+        <div>
+          <div className="wrapper">
+            <div className="table_container">
+              <table {...getTableProps()}>
+                <thead>
+                  {headerGroups.map((headerGroup) => (
+                    <tr {...headerGroup.getHeaderGroupProps()}>
+                      {headerGroup.headers.map((column) => (
+                        <th {...column.getHeaderProps()}>
+                          {column.render("Header")}
+                        </th>
+                      ))}
+                    </tr>
                   ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody {...getTableBodyProps()}>
-              {rows.map((row) => {
-                prepareRow(row);
-                return (
-                  <tr {...row.getRowProps()}>
-                    {row.cells.map((cell) => (
-                      <td {...cell.getCellProps()}> {cell.render("Cell")} </td>
-                    ))}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                </thead>
+                <tbody {...getTableBodyProps()}>
+                  {page.map((row) => {
+                    prepareRow(row);
+                    return (
+                      <tr {...row.getRowProps()}>
+                        {row.cells.map((cell) => (
+                          <td {...cell.getCellProps()}>
+                            {" "}
+                            {cell.render("Cell")}{" "}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="wrapper">
+            <div className="pagination_controls">
+              <button
+                onClick={() => gotoPage(0)}
+                disabled={!canPreviousPage}
+                className="pagination_button"
+              >
+                {"<<"}
+              </button>
+              <button
+                onClick={() => previousPage()}
+                disabled={!canPreviousPage}
+                className="pagination_button"
+              >
+                {"<"}
+              </button>
+              <button
+                onClick={() => nextPage()}
+                disabled={!canNextPage}
+                className="pagination_button"
+              >
+                {">"}
+              </button>
+              <button
+                onClick={() => gotoPage(pageCount - 1)}
+                disabled={!canNextPage}
+                className="pagination_button"
+              >
+                {">>"}
+              </button>
+              <span className="current_page">
+                Page{" "}
+                <strong>
+                  {pageIndex + 1} of {pageCount}
+                </strong>{" "}
+              </span>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

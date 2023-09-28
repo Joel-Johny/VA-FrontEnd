@@ -39,8 +39,8 @@ function AddSource() {
       toast(responseData.status_message, { position: "bottom-center" });
     } catch (error) {
       // Handle errors here
-      console.error("Axios error:", error);
-      toast.error(error, { position: "bottom-center" });
+      console.log("Axios error:", error);
+      toast.error(error.message, { position: "bottom-center" });
     }
   }
 

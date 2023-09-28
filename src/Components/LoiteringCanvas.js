@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-function LineCanvas({ base64Image,formData,lineNames,setLineNames}) {
+function LoiteringCanvas({ base64Image,formData,lineNames,setLineNames}) {
   const canvasRef = useRef(null);
 
   // For lines
@@ -172,4 +172,4 @@ function LineCanvas({ base64Image,formData,lineNames,setLineNames}) {
   );
 }
 
-export default LineCanvas;
+export default LoiteringCanvas;

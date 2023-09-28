@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-function RegionCanvas({base64Image,formData}) {
+function RegionCanvas({base64Image,formData,regionNames,setRegionNames}) {
   const canvasRef = useRef(null);
   const [rcoord, setRcoord] = useState([]);
   const [regions, setRegions] = useState([]);
@@ -94,6 +94,7 @@ function RegionCanvas({base64Image,formData}) {
   const handleErase = () => {
     setRcoord([]);
     setRegions([])
+    setRegionNames([])
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -105,6 +106,9 @@ function RegionCanvas({base64Image,formData}) {
         drawRegion(rcoord, nextColor);
         setRegions((oldRegions)=>[...oldRegions,rcoord])
         setRcoord([])
+        setRegionNames((oldRegion)=>{
+          return [...oldRegion,`Region ${regions.length+1}`]
+        })
       }
   };
 
@@ -115,7 +119,7 @@ function RegionCanvas({base64Image,formData}) {
       console.log(objectCoord);
       return {
         type: "region",
-        name: `region${index + 1}`,
+        name: regionNames[index].trim() || `Region ${index+1}`,
         vertex1:[objectCoord[0].x,objectCoord[0].y],
         vertex2:[objectCoord[1].x,objectCoord[1].y],
         vertex3:[objectCoord[2].x,objectCoord[2].y],
@@ -141,11 +145,11 @@ function RegionCanvas({base64Image,formData}) {
     postData(json)
   };
 
-  async function postData() {
+  async function postData(json) {
 
     const url = "http://localhost:5000/ac/set_config";
     try {
-      const response = await axios.post(url, formData);
+      const response = await axios.post(url, json);
 
       console.log(response);
 
@@ -173,7 +177,8 @@ function RegionCanvas({base64Image,formData}) {
         className="canvas"
         style={{
           backgroundImage:
-          `url("${base64Image}")`,  
+          'url("https://viso.ai/wp-content/uploads/2021/02/people-counting-computer-vision-background-1.jpg")',
+          // `url("${base64Image}")`,  
           backgroundRepeat: "no-repeat",
           backgroundSize: '100% 100%',
         }}

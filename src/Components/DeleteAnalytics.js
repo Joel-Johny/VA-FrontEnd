@@ -36,7 +36,7 @@ function DeleteAnalytics() {
     } catch (error) {
       // Handle errors here
       console.error("Axios error:", error);
-      toast.error(error, { position: "bottom-center" });
+      toast.error(error.message, { position: "bottom-center" });
     }
   }
 
