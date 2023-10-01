@@ -7,68 +7,114 @@ import { toast } from "react-toastify";
 function Event() {
   const [messages, setMessages] = useState([]);
   const [sourceOptions, setSourceOptions] = useState(null);
-  let headers = null 
-
+  let headers = [] 
+  let tableJsx=<div></div>
   // get headers from json key from the socket then prepare column and update header
 
+    
+  if (headers.length>0) {
 
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: "Sr.",
-        accessor: (row, index) => index + 1, // Add 1 to index to start from 1
-      },
-      {
-        Header: "Source",
-        accessor: "source_id",
-      },
-      {
-        Header: "Name",
-        accessor: "source_name",
-      },
-      {
-        Header: "Frame",
-        accessor: "frame_id",
-      },
-      {
-        Header: "Timestamp",
-        accessor: "timestamp",
-      },
-      {
-        Header: "Time",
-        accessor: "date",
-      },
-      {
-        Header: "Crowd Detected?",
-        accessor: "crowd_detected",
-        Cell: ({ value }) => <span>{value ? "Yes" : "No"}</span>,
-      },
-      {
-        Header: "Person in ROI",
-        accessor: "person_in_roi",
-      },
-    ],
-    []
-  );
+    const columns = headers.map((header) => ({
+      Header: header,
+      accessor: header,
+    }));
+  
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    page, // Instead of 'rows', we use 'page' for paginated data
-    prepareRow,
-    state: { pageIndex, pageSize }, // State for pagination
-    gotoPage, // Function to go to a specific page
-    nextPage, // Function to go to the next page
-    previousPage, // Function to go to the previous page
-    canNextPage, // Boolean indicating if there is a next page
-    canPreviousPage, // Boolean indicating if there is a previous page
-    pageCount,
-  } = useTable(
-    { columns, data: messages, initialState: { pageIndex: 0, pageSize: 50 } },
-    //data : messages; here messages also columns is expected to be a list hence you have to initalize it to a empty [] and no null
-    usePagination
-  );
+    const {
+      getTableProps,
+      getTableBodyProps,
+      headerGroups,
+      page, // Instead of 'rows', we use 'page' for paginated data
+      prepareRow,
+      state: { pageIndex, pageSize }, // State for pagination
+      gotoPage, // Function to go to a specific page
+      nextPage, // Function to go to the next page
+      previousPage, // Function to go to the previous page
+      canNextPage, // Boolean indicating if there is a next page
+      canPreviousPage, // Boolean indicating if there is a previous page
+      pageCount,
+    } = useTable(
+      { columns, data: messages, initialState: { pageIndex: 0, pageSize: 50 } },
+      //data : messages; here messages also columns is expected to be a list hence you have to initalize it to a empty [] and no null
+      usePagination
+    );
+
+     tableJsx=(
+      <div>
+      <div className="wrapper">
+        <div className="table_container">
+          <table {...getTableProps()}>
+            <thead>
+              {headerGroups.map((headerGroup) => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map((column) => (
+                    <th {...column.getHeaderProps()}>
+                      {column.render("Header")}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {page.map((row) => {
+                prepareRow(row);
+                return (
+                  <tr {...row.getRowProps()}>
+                    {row.cells.map((cell) => (
+                      <td {...cell.getCellProps()}>
+                        {" "}
+                        {cell.render("Cell")}{" "}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="wrapper">
+        <div className="pagination_controls">
+          <button
+            onClick={() => gotoPage(0)}
+            disabled={!canPreviousPage}
+            className="pagination_button"
+          >
+            {"<<"}
+          </button>
+          <button
+            onClick={() => previousPage()}
+            disabled={!canPreviousPage}
+            className="pagination_button"
+          >
+            {"<"}
+          </button>
+          <button
+            onClick={() => nextPage()}
+            disabled={!canNextPage}
+            className="pagination_button"
+          >
+            {">"}
+          </button>
+          <button
+            onClick={() => gotoPage(pageCount - 1)}
+            disabled={!canNextPage}
+            className="pagination_button"
+          >
+            {">>"}
+          </button>
+          <span className="current_page">
+            Page{" "}
+            <strong>
+              {pageIndex + 1} of {pageCount}
+            </strong>{" "}
+          </span>
+        </div>
+      </div>
+    </div>
+    )
+     
   const socketRef = useRef(null); // Ref for socket
   const ENDPOINT = "http://localhost:5000/";
 
@@ -95,6 +141,7 @@ function Event() {
 
   const handleSubmit = (e) => {
     console.log('submit called');
+    headers=null
     e.preventDefault();
     postData();
   }
@@ -164,13 +211,11 @@ function Event() {
         socketRef.current.on("kafka_msg_data_for_em", (data) => {
           // Handle the received data (e.g., update the messages state)
           console.log(data);
-          if (headers) {
-            const dataKeys = Object.keys(data);
-            console.log("Setting headers:", dataKeys);
-            // setHeaders(dataKeys);
+          if (!headers) {
+             headers = Object.keys(data);
             console.log("Headers set in variable-------------",headers)
           }
-          setMessages((prevMessages) => [data,...prevMessages]);
+          setMessages((prevMessages) =>[data,...prevMessages]);
         });
       }
       const responseData = response.data; // Axios already parses the JSON response
@@ -246,83 +291,8 @@ function Event() {
         </form>
       </div>
 
-      {messages.length > 0 && (
-        <div>
-          <div className="wrapper">
-            <div className="table_container">
-              <table {...getTableProps()}>
-                <thead>
-                  {headerGroups.map((headerGroup) => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
-                      {headerGroup.headers.map((column) => (
-                        <th {...column.getHeaderProps()}>
-                          {column.render("Header")}
-                        </th>
-                      ))}
-                    </tr>
-                  ))}
-                </thead>
-                <tbody {...getTableBodyProps()}>
-                  {page.map((row) => {
-                    prepareRow(row);
-                    return (
-                      <tr {...row.getRowProps()}>
-                        {row.cells.map((cell) => (
-                          <td {...cell.getCellProps()}>
-                            {" "}
-                            {cell.render("Cell")}{" "}
-                          </td>
-                        ))}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div className="wrapper">
-            <div className="pagination_controls">
-              <button
-                onClick={() => gotoPage(0)}
-                disabled={!canPreviousPage}
-                className="pagination_button"
-              >
-                {"<<"}
-              </button>
-              <button
-                onClick={() => previousPage()}
-                disabled={!canPreviousPage}
-                className="pagination_button"
-              >
-                {"<"}
-              </button>
-              <button
-                onClick={() => nextPage()}
-                disabled={!canNextPage}
-                className="pagination_button"
-              >
-                {">"}
-              </button>
-              <button
-                onClick={() => gotoPage(pageCount - 1)}
-                disabled={!canNextPage}
-                className="pagination_button"
-              >
-                {">>"}
-              </button>
-              <span className="current_page">
-                Page{" "}
-                <strong>
-                  {pageIndex + 1} of {pageCount}
-                </strong>{" "}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+      {messages.length > 0 && {tableJsx} }
+  )
 }
 
 export default Event;

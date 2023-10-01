@@ -32,8 +32,20 @@ function DeleteAnalytics() {
 
       // Handle the JSON response data here
       console.log("Response data:", responseData);
-      toast(responseData.status_message, { position: "bottom-center" });
-    } catch (error) {
+      if (responseData.status_reason !== "")
+        toast(responseData.status_reason, { position: "bottom-center" });
+      else if (responseData.status_code === 200)
+        toast("Successfully deleted", { position: "bottom-center" });
+      else
+        toast.error("Failed", { position: "bottom-center" });
+
+      setFormData({
+        source_id: "",
+        analytics: ""
+      })
+    }
+
+    catch (error) {
       // Handle errors here
       console.error("Axios error:", error);
       toast.error(error.message, { position: "bottom-center" });

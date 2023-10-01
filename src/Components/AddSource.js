@@ -59,7 +59,14 @@ function AddSource() {
 
       // Handle the JSON response data here
       console.log("Response data:", responseData);
-      toast(responseData.status_message, { position: "bottom-center" });
+      if(responseData.status_reason!=="")
+        toast(responseData.status_reason, { position: "bottom-center" });
+      else if(responseData.status_code===200)
+        toast("Successfully added", { position: "bottom-center" });
+      else
+        toast.error("Failed", { position: "bottom-center" });
+
+
     } catch (error) {
       // Handle errors here
       console.log("Axios error:", error);
@@ -152,9 +159,15 @@ function AddSource() {
             <option value="null" hidden>
               Select Mode
             </option>
-            <option value="Loitering">Loitering </option>
-            <option value="Line Crossing">Line Crossing</option>
-            <option value="Crowd">Crowd</option>
+            <option value="loitering">Loitering </option>
+            <option value="crowd">Crowd</option>
+            <option value="trespassing">Trespassing</option>
+            <option value="vehicle_crossing">Vehicle Crossing</option>
+            <option value="vehicle_stoppage">Vehicle Stoppage</option>
+            <option value="object_abandoned">Abandoned Object</option>
+            <option value="fire_detection">Fire Detection</option>
+            <option value="scence_change">Scene Changed</option>
+            <option value="object_theft">Object Theft</option>
           </select>
         </div>
 

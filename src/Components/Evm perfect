@@ -167,7 +167,7 @@ function Event() {
           if (headers) {
             const dataKeys = Object.keys(data);
             console.log("Setting headers:", dataKeys);
-            // setHeaders(dataKeys);
+            setHeaders(dataKeys);
             console.log("Headers set in variable-------------",headers)
           }
           setMessages((prevMessages) => [data,...prevMessages]);

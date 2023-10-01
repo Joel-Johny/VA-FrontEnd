@@ -104,7 +104,6 @@ function LineCanvas({ base64Image,formData,lineDetails,setLineDetails}) {
   const handleSubmit = () => {
     let roi_List = [];
     roi_List=lineDetails.map((line,index) => {
-      console.log(line)
       return{
         type : line.type,
         name : line.name.trim() ||  `Line ${index+1}`,
@@ -114,7 +113,7 @@ function LineCanvas({ base64Image,formData,lineDetails,setLineDetails}) {
     });
 
     const json = {
-      cameraid: formData.sourceId,
+      cameraid: formData.sourceId.split(',')[0].split(':')[1].trim(),
       analytics: formData.analytics,
       roi: roi_List
     };
@@ -133,7 +132,7 @@ function LineCanvas({ base64Image,formData,lineDetails,setLineDetails}) {
 
       // Handle the JSON response data here
       console.log("Response data:", responseData);
-      toast(responseData.status_message,{position:"bottom-center"})
+      toast("Analytics Configured Successfully",{position:"bottom-center"})
     } catch (error) {
       // Handle errors here
       console.error("Axios error:", error);
@@ -152,8 +151,8 @@ function LineCanvas({ base64Image,formData,lineDetails,setLineDetails}) {
         className="canvas"
         style={{
           backgroundImage:
-            // `url("${base64Image}")`,
-            'url("https://viso.ai/wp-content/uploads/2021/02/people-counting-computer-vision-background-1.jpg")',
+            `url("${base64Image}")`,
+            // 'url("https://viso.ai/wp-content/uploads/2021/02/people-counting-computer-vision-background-1.jpg")',
           backgroundRepeat: "no-repeat",
           backgroundSize: "100% 100%",
         }}

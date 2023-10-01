@@ -275,12 +275,14 @@ tbody tr:hover {
   width: 150px;
 }
 .event_monitor_form_container>form>div>select{
-  width: 185px;
+  padding-right: 15px;
+  width: 280px;
   padding-left: 0px;
   text-indent: 2px;
+  font-size: 15px;
 }
-.event_monitor_form_container>form>button{width: 355px;}
-
+.event_monitor_form_container>form>button{width: 435px;}
+.flex-row{flex-direction: row;}
 /* --------------MEDIA QUERY -----------------------*/
 
 

@@ -26,7 +26,7 @@ function Dashboard() {
           streaming_server_ip: response.data.streaming_server_ip,
         }));
       } catch (error) {
-        toast(error.message,{position:"bottom-center"})
+        toast.error(error.message,{position:"bottom-center"})
         console.error("Fetch error:", error);
       }
     }
@@ -60,6 +60,7 @@ function Dashboard() {
 
       // Handle the JSON response data here
       console.log("Response data:", responseData);
+
       toast(responseData,{position:"bottom-center"})
 
     } catch (error) {
@@ -91,7 +92,7 @@ function Dashboard() {
           <div className="sub_form_label_input">
             <label className="dash-label">Message Broker Address : </label>
             <input
-              type="url"
+              // type="url"
               name="message_broker_address"
               value={address.message_broker_address}
               onChange={handleChangeAddress}

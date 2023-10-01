@@ -3,6 +3,7 @@ import LineCanvas from "./LineCanvas";
 import RegionCanvas from "./RegionCanvas";
 import axios from "axios";
 import socketIOClient from "socket.io-client";
+import { toast } from "react-toastify";
 import { v4 as uid } from "uuid";
 
 function AnalyticsConfig() {
@@ -17,18 +18,18 @@ function AnalyticsConfig() {
   const [lineDetails, setLineDetails] = useState([]);
   const [regionDetails, setRegionDetails] = useState([]);
   const staticObject = [
-    {
-      type: "line",
-      name: "entry_line",
-      start: [0, 0],
-      end: [500, 400],
-    },
-    {
-      type: "line",
-      name: "exit_line",
-      start: [10, 10],
-      end: [204, 203],
-    },
+    // {
+    //   type: "line",
+    //   name: "entry_line",
+    //   start: [0, 0],
+    //   end: [500, 400],
+    // },
+    // {
+    //   type: "line",
+    //   name: "exit_line",
+    //   start: [10, 10],
+    //   end: [204, 203],
+    // },
   ];
   useEffect(() => {
     getConfig();
@@ -55,6 +56,7 @@ function AnalyticsConfig() {
 
   const handleChangeAnalytics = (e) => {
     const { name, value } = e.target;
+    console.log(name,value)
     setFormData({
       ...formData,
       [name]: value,
@@ -68,25 +70,14 @@ function AnalyticsConfig() {
   };
 
   async function getImage() {
-    const url = "http://localhost:5000/custom"; // ORG : http://localhost:5000/get_image
-
+    const url = "http://localhost:5000/ac/get_image"; // ORG : http://localhost:5000/ac/get_image
+    const data_to_send = {
+      "sourceId": formData.sourceId.split(',')[0].split(':')[1].trim(),
+      "analytics": formData.analytics
+    }
     try {
-      const response = await axios.get(url);
-      console.log(response);
-      if (response.status == 200) {
-        socketRef.current = socketIOClient(ENDPOINT);
-        socketRef.current.on("connect", () => {
-          console.log("Connected to the server via WebSocket");
-        });
-        socketRef.current.on("kafka_msg_data", (data) => {
-          // Convert the received BSON encoded data to a JavaScript object
-          console.log("Here is data from the socket", data);
-          setImageData(data.base64_url);
-
-          socketRef.current.disconnect();
-          console.log("WebSocket disconnected");
-        });
-      }
+      const response = await axios.post(url, data_to_send);
+      setImageData(response.data.status_message.base64_url);
     } catch (error) {
       // Handle errors here
       console.error("Axios error:", error);
@@ -97,14 +88,12 @@ function AnalyticsConfig() {
     const url = "http://localhost:5000/get_config";
     try {
       const response = await axios.get(url);
-
       const responseData = response.data; // Axios already parses the JSON response
-      console.log(responseData.status_message);
-      // const jsonString = JSON.parse(responseData.status_message);
+      const jsonString = JSON.parse(responseData.status_message);
 
-      const get_list = responseData.status_message.map((object) => {
-        // return `SourceId : ${object.source_id} , Name : ${object.source_name}`
-        return object.source_id;
+      const get_list = jsonString.map((object) => {
+        return `SourceId : ${object.source_id} , Name : ${object.source_name}`
+        // return object.source_id;
       });
       // console.log(get_list)
 
@@ -113,6 +102,7 @@ function AnalyticsConfig() {
     } catch (error) {
       // Handle errors here
       console.error("Axios error:", error);
+      toast.error("Please update streaming server!", { position: "bottom-center" });
     }
   }
 
@@ -156,18 +146,7 @@ function AnalyticsConfig() {
                   </option>
                 ))}
             </select>
-            {/* <select
-                onChange={handleChangeSource}
-                value={formData.sourceId}
-                name="sourceId"
-              >
-                <option value="null" hidden>
-                  Select Source ID
-                </option>
-                <option value="0">0 </option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-              </select> */}
+          
           </div>
 
           <div className="label_input_container">
@@ -181,9 +160,15 @@ function AnalyticsConfig() {
                 Select Mode
               </option>
               {/* backend */}
-              <option value="Loitering">Loitering </option>
-              <option value="Line Crossing">Line Crossing</option>
-              <option value="Crowd">Crowd</option>
+              <option value="loitering">Loitering </option>
+              <option value="crowd">Crowd</option>
+              <option value="trespassing">Trespassing</option>
+              <option value="vehicle_crossing">Vehicle Crossing</option>
+              <option value="vehicle_stoppage">Vehicle Stoppage</option>
+              <option value="object_abandoned">Abandoned Object</option>
+              <option value="fire_detection">Fire Detection</option>
+              <option value="scence_change">Scene Changed</option>
+              <option value="object_theft">Object Theft</option>
             </select>
           </div>
         </form>
@@ -247,28 +232,49 @@ function AnalyticsConfig() {
 
       <div className="canvas_container">
         {/* <img src={`data:image/jpeg;base64,${imageData}`}/> */}
-        {formData.analytics === "Line Crossing" ? (
-          <LineCanvas
-            base64Image={imageData}
-            formData={formData}
-            lineDetails={lineDetails}
-            setLineDetails={setLineDetails}
-          />
-        ) : formData.analytics === "Crowd" ? (
+        {formData.analytics === "loitering" ? (
           <RegionCanvas
-            base64Image={imageData}
-            formData={formData}
-            regionNames={regionDetails}
-            setRegionNames={setRegionDetails}
-          />
-        ) : formData.analytics === "Loitering" ? (
+          base64Image={imageData}
+          formData={formData}
+          regionNames={regionDetails}
+          setRegionNames={setRegionDetails}
+        />
+        ) : formData.analytics === "trespassing" ? (
           <LineCanvas
             base64Image={imageData}
             formData={formData}
             lineDetails={lineDetails}
             setLineDetails={setLineDetails}
           />
-        ) : //need to make seperate canvas for loitering ->Line / Region
+        ) : formData.analytics === "crowd" ? (
+          <RegionCanvas
+          base64Image={imageData}
+          formData={formData}
+          regionNames={regionDetails}
+          setRegionNames={setRegionDetails}
+        />
+        ) : formData.analytics === "vehicle_crossing" ? (
+          <LineCanvas
+            base64Image={imageData}
+            formData={formData}
+            lineDetails={lineDetails}
+            setLineDetails={setLineDetails}
+          />
+        ) : formData.analytics === "vehicle_stoppage" ? (
+          <RegionCanvas
+          base64Image={imageData}
+          formData={formData}
+          regionNames={regionDetails}
+          setRegionNames={setRegionDetails}
+          />
+        ) : formData.analytics === "object_theft" ? (
+          <RegionCanvas
+          base64Image={imageData}
+          formData={formData}
+          regionNames={regionDetails}
+          setRegionNames={setRegionDetails}
+          />
+        ) :
         null}
       </div>
     </div>
