@@ -1,24 +1,39 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState,useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { v4 as uid } from "uuid";
 
-function LineCanvas({ base64Image,formData,lineNames,setLineNames}) {
+function LineCanvas({ base64Image,formData,lineDetails,setLineDetails}) {
   const canvasRef = useRef(null);
 
   // For lines
   const [startPoint, setStartPoint] = useState(null);
   const [endPoint, setEndPoint] = useState(null);
-  const [lines, setLines] = useState([]);
   const [lineColors, setLineColors] = useState(["red", "green", "blue"]); // Define colors for lines
 
+  useEffect(()=>{
+    //Calling preConfiguredDrawings Function after the comp loads so that prev configured drawings are drawn in cavas
+    //with UseEffect having dependancy of analytics form data this means whenever component loads or form value changes preconfig will be drawn 
+    preConfiguredDrawings()
+  },[formData.analytics])
   const getNextLineColor = () => {
     // Get the next color in the list, and cycle back to the first if needed
-    const nextColor = lineColors[lines.length % lineColors.length];
+    const nextColor = lineColors[lineDetails.length % lineColors.length];
     return nextColor;
   };
 
+  const preConfiguredDrawings=()=>{
+    if (lineDetails.length < 3) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      lineDetails.forEach((line, index) => {
+        drawLine({x:line.start[0],y:line.start[1]}, {x:line.end[0],y:line.end[1]}, lineColors[index]);
+      });}
+  }
   const handleMouseDown = (event) => {
-    if (lines.length < 3) {
+    if (lineDetails.length < 3) {
       if (!startPoint) {
         const { offsetX, offsetY } = event.nativeEvent;
         setStartPoint({ x: offsetX, y: offsetY });
@@ -30,13 +45,13 @@ function LineCanvas({ base64Image,formData,lineNames,setLineNames}) {
   };
 
   const previewLine = (event) => {
-    if (lines.length < 3) {
+    if (lineDetails.length < 3) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      lines.forEach((line, index) => {
-        drawLine(line.startPoint, line.endPoint, lineColors[index]);
+      lineDetails.forEach((line, index) => {
+        drawLine({x:line.start[0],y:line.start[1]}, {x:line.end[0],y:line.end[1]}, lineColors[index]);
       });
 
       if (startPoint) {
@@ -64,57 +79,39 @@ function LineCanvas({ base64Image,formData,lineNames,setLineNames}) {
   const handleErase = () => {
     setStartPoint(null);
     setEndPoint(null);
-    setLines([]);
-    setLineNames([])
+    setLineDetails([])
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   };
 
   const draw = () => {
-    if (startPoint && endPoint && lines.length < 3) {
-      const newLine = { startPoint, endPoint };
+    if (startPoint && endPoint && lineDetails.length < 3) {
+      const newLine = { name:`Line ${lineDetails.length+1}`,id:uid(),start:[startPoint.x,startPoint.y], end:[endPoint.x,endPoint.y] ,type:"line"};
       // without this also running how tf? need to research//
       const nextColor = getNextLineColor();
       drawLine(startPoint, endPoint, nextColor);
       // -----------------------------------------------//
-      setLines((oldList) => [...oldList, newLine]);
+      // setLines((oldList) => [...oldList, newLine]);
       setStartPoint(null);
       setEndPoint(null);
-      setLineNames((oldLines)=>{
-        return [...oldLines,`Line ${lines.length+1}`]
+      setLineDetails((oldLine)=>{
+        return [...oldLine,newLine]
       })
     }
   };
 
   const handleSubmit = () => {
     let roi_List = [];
-    roi_List=lines.map((objectCoord, index) => {
-      console.log(objectCoord)
+    roi_List=lineDetails.map((line,index) => {
+      console.log(line)
       return{
-        type: "line",
-        name: lineNames[index].trim() || `Line ${index+1}`,
-        start:[objectCoord.startPoint.x,objectCoord.startPoint.y],
-        end:[objectCoord.endPoint.x,objectCoord.endPoint.y]
+        type : line.type,
+        name : line.name.trim() ||  `Line ${index+1}`,
+        start : line.start,
+        end :line.end
       }
-      // coordinates[`line${index + 1}`] = objectCoord;
     });
-
-    // const options = {
-    //   weekday: "long",
-    //   year: "numeric",
-    //   month: "long",
-    //   day: "numeric",
-    //   hour: "numeric",
-    //   minute: "numeric",
-    //   second: "numeric",
-    // };
-
-    // const currentDateTime = new Date();
-    // const formattedDate = currentDateTime.toLocaleDateString(
-    //   undefined,
-    //   options
-    // );
 
     const json = {
       cameraid: formData.sourceId,

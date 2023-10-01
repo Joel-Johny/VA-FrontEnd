@@ -33,6 +33,9 @@ function DeleteSource() {
     // Handle the JSON response data here
     console.log("Response data:", responseData);
     toast(responseData.status_message,{position:"bottom-center"})
+    setFormData({
+      source_id: "",
+    });
 
   } catch (error) {
     // Handle errors here

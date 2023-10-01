@@ -11,18 +11,30 @@ function AddSource() {
     password: "",
     source_rate: "",
     analytics: "",
+    publish_image: false
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    const { name, value, type, checked } = e.target;
+
+    // Check if the input element is a checkbox
+    if (type === 'checkbox') {
+      setFormData({
+        ...formData,
+        [name]: checked, // Set the checkbox value directly
+      });
+    } else {
+      // Handle other input types (text, etc.)
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(formData)
     postData();
   };
   async function postData() {
@@ -33,6 +45,17 @@ function AddSource() {
       console.log(response);
 
       const responseData = response.data; // Axios already parses the JSON response
+
+      setFormData({
+        source_id: "",
+        source_name: "",
+        rtsp_url: "",
+        username: "",
+        password: "",
+        source_rate: "",
+        analytics: "",
+        publish_image: false, 
+      });
 
       // Handle the JSON response data here
       console.log("Response data:", responseData);
@@ -133,6 +156,16 @@ function AddSource() {
             <option value="Line Crossing">Line Crossing</option>
             <option value="Crowd">Crowd</option>
           </select>
+        </div>
+
+        <div className="sub_form_label_input">
+          <label htmlFor="PublishImage">Publish Image : </label>
+          <input
+            type="checkbox"
+            name="publish_image"
+            checked={formData.publish_image}
+            onChange={handleChange}
+          />
         </div>
 
         <button type="submit">Submit</button>

@@ -3,6 +3,7 @@ import LineCanvas from "./LineCanvas";
 import RegionCanvas from "./RegionCanvas";
 import axios from "axios";
 import socketIOClient from "socket.io-client";
+import { v4 as uid } from "uuid";
 
 function AnalyticsConfig() {
   const ENDPOINT = "http://localhost:5000"; // Replace with your Flask server's URL
@@ -13,22 +14,24 @@ function AnalyticsConfig() {
   });
   const [imageData, setImageData] = useState(null);
   const [sourceOptions, setSourceOptions] = useState(null);
-  const [lineNames, setLineNames] = useState([]);
-  const [regionNames, setRegionNames] = useState([]);
-
+  const [lineDetails, setLineDetails] = useState([]);
+  const [regionDetails, setRegionDetails] = useState([]);
+  const staticObject = [
+    {
+      type: "line",
+      name: "entry_line",
+      start: [0, 0],
+      end: [500, 400],
+    },
+    {
+      type: "line",
+      name: "exit_line",
+      start: [10, 10],
+      end: [204, 203],
+    },
+  ];
   useEffect(() => {
     getConfig();
-
-    // socketRef.current = socketIOClient(ENDPOINT);
-
-    // socketRef.current.on("connect", () => {
-    //   console.log("Connected to the server via WebSocket");
-    // });
-    // socketRef.current.on("kafka_msg_data", (data) => {
-    //   // Convert the received BSON encoded data to a JavaScript object
-    //   console.log("Here is data from the socket",data);
-    //   setImageData(data.base64_url);
-    // });
 
     return () => {
       if (socketRef.current) socketRef.current.disconnect();
@@ -42,6 +45,13 @@ function AnalyticsConfig() {
       [name]: value,
     });
   };
+  const setRoiDetails = (staticObject) => {
+    const formatedLineDetails = staticObject.map((lineData) => {
+      return { ...lineData, id: uid() };
+    });
+    console.log("THis is the line details sent to canvas",formatedLineDetails);
+    setLineDetails(formatedLineDetails);
+  };
 
   const handleChangeAnalytics = (e) => {
     const { name, value } = e.target;
@@ -49,10 +59,12 @@ function AnalyticsConfig() {
       ...formData,
       [name]: value,
     });
-    console.log("Calling getImage Image making a get request....");
-    setLineNames([]);
-    setRegionNames([]);
+    setLineDetails([]);
+    setRegionDetails([]);
+
+    console.log("Calling getImage making a get request....");
     getImage();
+    setRoiDetails(staticObject);
   };
 
   async function getImage() {
@@ -110,16 +122,16 @@ function AnalyticsConfig() {
   };
 
   const handleChangeLineName = (e, index) => {
-    const updatedLineNames = [...lineNames];
-    updatedLineNames[index] = e.target.value;
-    console.log(e.target.value);
-    setLineNames(updatedLineNames);
+    const updatedLineNames = [...lineDetails];
+    updatedLineNames[index].name = e.target.value;
+    console.log("Changing line no.",index+1,updatedLineNames[index].name);
+    setLineDetails(updatedLineNames);
   };
   const handleChangeRegionName = (e, index) => {
-    const updatedRegionNames = [...regionNames];
-    updatedRegionNames[index] = e.target.value;
+    const updatedRegionNames = [...regionDetails];
+    updatedRegionNames[index].name = e.target.value;
     console.log(e.target.value);
-    setRegionNames(updatedRegionNames);
+    setRegionDetails(updatedRegionNames);
   };
 
   return (
@@ -168,6 +180,7 @@ function AnalyticsConfig() {
               <option value="null" hidden>
                 Select Mode
               </option>
+              {/* backend */}
               <option value="Loitering">Loitering </option>
               <option value="Line Crossing">Line Crossing</option>
               <option value="Crowd">Crowd</option>
@@ -175,7 +188,7 @@ function AnalyticsConfig() {
           </div>
         </form>
         {/* TABLE FOR LINE  */}
-        {lineNames.length > 0 && (
+        {lineDetails.length > 0 && (
           <div className="line_region_row_table">
             <table>
               <thead>
@@ -185,12 +198,12 @@ function AnalyticsConfig() {
                 </tr>
               </thead>
               <tbody>
-                {lineNames.map((lineName, index) => (
-                  <tr key={index}>
+                {lineDetails.map((lineDetail, index) => (
+                  <tr key={lineDetail.id}>
                     <td>{`${index + 1}`}</td>
                     <td className="line_region_row_table_edit_input">
                       <input
-                        value={lineName}
+                        value={lineDetail.name}
                         placeholder={`Default : Line ${index + 1}`}
                         onChange={(e) => handleChangeLineName(e, index)}
                         // Add a unique key based on the index
@@ -203,7 +216,7 @@ function AnalyticsConfig() {
           </div>
         )}
         {/* TABLE FOR REGION  */}
-        {regionNames.length > 0 && (
+        {/* {regionDetails.length > 0 && (
           <div className="line_region_row_table">
             <table>
               <thead>
@@ -213,7 +226,7 @@ function AnalyticsConfig() {
                 </tr>
               </thead>
               <tbody>
-                {regionNames.map((regionName, index) => (
+                {regionDetails.map((regionName, index) => (
                   <tr key={index}>
                     <td>{`${index + 1}`}</td>
                     <td className="line_region_row_table_edit_input">
@@ -229,7 +242,7 @@ function AnalyticsConfig() {
               </tbody>
             </table>
           </div>
-        )}
+        )} */}
       </div>
 
       <div className="canvas_container">
@@ -238,22 +251,22 @@ function AnalyticsConfig() {
           <LineCanvas
             base64Image={imageData}
             formData={formData}
-            lineNames={lineNames}
-            setLineNames={setLineNames}
+            lineDetails={lineDetails}
+            setLineDetails={setLineDetails}
           />
         ) : formData.analytics === "Crowd" ? (
           <RegionCanvas
             base64Image={imageData}
             formData={formData}
-            regionNames={regionNames}
-            setRegionNames={setRegionNames}
+            regionNames={regionDetails}
+            setRegionNames={setRegionDetails}
           />
         ) : formData.analytics === "Loitering" ? (
           <LineCanvas
             base64Image={imageData}
             formData={formData}
-            lineNames={lineNames}
-            setLineNames={setLineNames}
+            lineDetails={lineDetails}
+            setLineDetails={setLineDetails}
           />
         ) : //need to make seperate canvas for loitering ->Line / Region
         null}

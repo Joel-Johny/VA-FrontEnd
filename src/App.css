@@ -150,7 +150,7 @@ li{list-style: none;}
 .line_region_row_table{margin-top: 35px;}
 
 .line_region_row_table_edit_input{padding: 0;}
-.line_region_row_table_edit_input>input{padding:12px 30px; border: none;background-color: transparent; font-weight: 600;  font-size: 16px;  font-family: 'Ubuntu'; text-align: center;}
+.line_region_row_table_edit_input>input{padding:12px 15px; border: none;background-color: transparent; font-weight: 600;  font-size: 16px;  font-family: 'Ubuntu'; text-align: center;}
 
 /*---------------------- Analytics Page------------------------------- */
 
@@ -229,7 +229,7 @@ tbody tr:hover {
   font-size: 17px;
   padding: 5px;
   padding-left: 5px;
-  padding-right: 150px;
+  padding-right: 195px;
   border-radius: 5px;
 }
 /* ---------------------------------------------- */
@@ -238,7 +238,7 @@ tbody tr:hover {
   text-align: center;
   font-size: 17.5px;
   padding: 5px;
-  width: 420px;
+  width: 463px;
   border-radius: 5px;
   font-size: 17px;
   border: none;
@@ -248,8 +248,9 @@ tbody tr:hover {
 }
 .sub_form_label_input{display: flex;gap:20px;align-items: center;}
 .sub_form_label_input>label{padding: 5px; width: 210px;font-size: 18px;}
-.sub_form_label_input>input{  padding: 3px;padding-left: 11px;padding-right: 11px;  border-radius: 3px;border: #999;}
+.sub_form_label_input>input{  padding: 3px;padding-left: 11px;padding-right: 11px;  border-radius: 3px;border: #999;font-size: 16px;}
 .sub_form_label_input>select{  padding: 3px; border-radius: 2px;border: #999;  font-size: 17px;  padding: 3px;  padding-left: 5px;  padding-right: 53px;  border-radius: 5px;text-indent: 0px;}
+.sub_form_label_input>button{  padding: 3px;padding-left: 30px;padding-right: 30px;  border-radius: 3px;border: #999;}
 .sub_form_label_input>button{  padding: 3px;padding-left: 30px;padding-right: 30px;  border-radius: 3px;border: #999;}
 .configContainer{margin-top: 20px;margin-left: 10px;}
 /* ---------DASHBOARD----------- */
@@ -258,7 +259,7 @@ tbody tr:hover {
   width: 250px !important;
 }
 .dashboard{margin-top: 85px;padding-left: 50px;}
-.dashboard>form>button{width: 462px;}
+.dashboard>form>button{width: 500px;}
 /* ---------DASHBOARD----------- */
 .center-align{
   display: flex;

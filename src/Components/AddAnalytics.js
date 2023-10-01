@@ -37,6 +37,12 @@ function AddAnalytics() {
     console.log("Response data:", responseData);
     toast(responseData.status_message,{position:"bottom-center"})
 
+    setFormData({
+      source_id: "",
+      analytics: ""
+    })
+
+
   } catch (error) {
     // Handle errors here
     console.error("Axios error:", error);
