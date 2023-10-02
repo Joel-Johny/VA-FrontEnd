@@ -10,15 +10,6 @@ function Event() {
 
   // get headers from json key from the socket then prepare column and update header
 
-  const columns =useMemo(()=>{
-
-    return messages.headers.map((header) => ({
-      Header: header,
-      accessor: header,
-    }));
-  },[])
- 
-
   const {
     getTableProps,
     getTableBodyProps,
@@ -33,7 +24,7 @@ function Event() {
     canPreviousPage, // Boolean indicating if there is a previous page
     pageCount,
   } = useTable(
-    { columns, data: messages.rowData, initialState: { pageIndex: 0, pageSize: 50 } },
+    { columns :messages.headers, data: messages.rowData, initialState: { pageIndex: 0, pageSize: 50 } },
     //data : messages; here messages also columns is expected to be a list hence you have to initalize it to a empty [] and no null
     usePagination
   );
@@ -135,11 +126,26 @@ function Event() {
         socketRef.current = socketIOClient(ENDPOINT);
         // Listen for 'kafka_msg_data' events
         socketRef.current.on("kafka_msg_data_for_em", (data) => {
-          setMessages((prevState) => ({
-            ...prevState,
-            headers:Object.keys(data),
-            rowData: [...prevState.rowData, data], // Append new data to the existing rowData
-          }));
+
+          setMessages((prevState)=>{
+
+            const headerRT=Object.keys(data).map((singleHeader)=>{
+              return {
+                Header: singleHeader,
+                accessor: singleHeader,
+              }})
+
+            return {
+              ...prevState,
+              headers:headerRT,
+              rowData: [...prevState.rowData, data]
+            }
+          })
+          // setMessages((prevState) => ({ //perfectly setting data
+          //   ...prevState,
+          //   headers:Object.keys(data),
+          //   rowData: [...prevState.rowData, data], // Append new data to the existing rowData
+          // }));
         });
         
       }
@@ -224,6 +230,7 @@ function Event() {
                   {headerGroups.map((headerGroup) => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
                       {headerGroup.headers.map((column) => (
+
                         <th {...column.getHeaderProps()}>
                           {column.render("Header")}
                         </th>

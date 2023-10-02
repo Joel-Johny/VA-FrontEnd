@@ -7,62 +7,185 @@ import { toast } from "react-toastify";
 function Event() {
   const [messages, setMessages] = useState([]);
   const [sourceOptions, setSourceOptions] = useState(null);
-  const [headers, setHeaders] = useState([]);
+  const [headers, setHeaders] = useState(null);
 
   // get headers from json key from the socket then prepare column and update header
-  console.log("---------THis is HEaders data-----",headers)
 
-  const mapping  = {
-    "loitering" : {
-      "headers": "Source,Name,Frame,Timestamp,Time,Detections",
-      "accessor": "source_id,source_name,frame_id,timestamp,date,detections"
-    },
-    "crowd" : {
-      "headers": "Source,Name,Frame,Timestamp,Time,CrowdDetected,Person_In_Roi",
-      "accessor": "source_id,source_name,frame_id,timestamp,date,crowd_detected,person_in_roi"
-    },
-    "trespassing" : {
-      "headers": "Source,Name,Frame,Timestamp,Time,Detections",
-      "accessor": "source_id,source_name,frame_id,timestamp,date,detections"
-    },
-    "object_abandoned" : {
-      "headers": "Source,Name,Frame,Timestamp,Time,Abandoned Object Id",
-      "accessor": "source_id,source_name,frame_id,timestamp,date,abandoned_object_ids"
-    },
-    "vehicle_crossing" : {
-      "headers": "Source,Name,Frame,Timestamp,Time,Detections",
-      "accessor": "source_id,source_name,frame_id,timestamp,date,detections"
-    },
-    "vehicle_stoppage" : {
-      "headers": "Source,Name,Frame,Timestamp,Time, Vehicle Id",
-      "accessor": "source_id,source_name,frame_id,timestamp,date,park_detected_ids"
-    },
-    "fire_detection" : {
-      "headers": "Source,Name,Frame,Timestamp,Time, Fire Detected",
-      "accessor": "source_id,source_name,frame_id,timestamp,date,fire_detected"
-    },
-    "scene_change" : {
-      "headers": "Source,Name,Frame,Timestamp,Time,Scene Change",
-      "accessor": "source_id,source_name,frame_id,timestamp,date,scene_change"
-    },
-    "object_theft" : {
-      "headers": "Source,Name,Frame,Timestamp,Time,Object Missing",
-      "accessor": "source_id,source_name,frame_id,timestamp,date,object_missing"
-    },
-  }
 
-  // const tableData = useMemo(() => {
-    
-  //   const columns2 = headers.split(',');
-  //   const accessors = jsonData.accessor.split(',');
+  const LoiteringColumns = React.useMemo(
+    () => [
+      {
+        Header: "Sr.",
+        accessor: (row, index) => index + 1, // Add 1 to index to start from 1
+      },
+      {
+        Header: "Source",
+        accessor: "source_id",
+      },
+      {
+        Header: "Name",
+        accessor: "source_name",
+      },
+      {
+        Header: "Frame",
+        accessor: "frame_id",
+      },
+      {
+        Header: "Timestamp",
+        accessor: "timestamp",
+      },
+      {
+        Header: "Time",
+        accessor: "date",
+      },
+      {
+        Header: "Detections",
+        accessor: "detections",
+      },
+    ],
+    []
+  );
 
-  //   const data = columns2.map((header, index) => ({
-  //     header,
-  //     accessor: accessors[index]
-  //   }));
+  const CrowdColumns = React.useMemo(
+    () => [
+      {
+        Header: "Sr.",
+        accessor: (row, index) => index + 1, // Add 1 to index to start from 1
+      },
+      {
+        Header: "Source",
+        accessor: "source_id",
+      },
+      {
+        Header: "Name",
+        accessor: "source_name",
+      },
+      {
+        Header: "Frame",
+        accessor: "frame_id",
+      },
+      {
+        Header: "Timestamp",
+        accessor: "timestamp",
+      },
+      {
+        Header: "Time",
+        accessor: "date",
+      },
+      {
+        Header: "Crowd Detected?",
+        accessor: "crowd_detected",
+        Cell: ({ value }) => <span>{value ? "Yes" : "No"}</span>,
+      },
+      {
+        Header: "Person in ROI",
+        accessor: "person_in_roi",
+      },
+    ],
+    []
+  );
 
-  //   return data;
-  // }, []);
+  const TressColumns = React.useMemo(
+    () => [
+      {
+        Header: "Sr.",
+        accessor: (row, index) => index + 1, // Add 1 to index to start from 1
+      },
+      {
+        Header: "Source",
+        accessor: "source_id",
+      },
+      {
+        Header: "Name",
+        accessor: "source_name",
+      },
+      {
+        Header: "Frame",
+        accessor: "frame_id",
+      },
+      {
+        Header: "Timestamp",
+        accessor: "timestamp",
+      },
+      {
+        Header: "Time",
+        accessor: "date",
+      },
+      {
+        Header: "Detections",
+        accessor: "detections",
+      },
+    ],
+    []
+  );
+
+  const AbandonedColumns = React.useMemo(
+    () => [
+      {
+        Header: "Sr.",
+        accessor: (row, index) => index + 1, // Add 1 to index to start from 1
+      },
+      {
+        Header: "Source",
+        accessor: "source_id",
+      },
+      {
+        Header: "Name",
+        accessor: "source_name",
+      },
+      {
+        Header: "Frame",
+        accessor: "frame_id",
+      },
+      {
+        Header: "Timestamp",
+        accessor: "timestamp",
+      },
+      {
+        Header: "Time",
+        accessor: "date",
+      },
+      {
+        Header: "Abandoned Object Id",
+        accessor: "abandoned_object_id",
+      },
+    ],
+    []
+  );
+
+  const VehicleCrossingColumns = React.useMemo(
+    () => [
+      {
+        Header: "Sr.",
+        accessor: (row, index) => index + 1, // Add 1 to index to start from 1
+      },
+      {
+        Header: "Source",
+        accessor: "source_id",
+      },
+      {
+        Header: "Name",
+        accessor: "source_name",
+      },
+      {
+        Header: "Frame",
+        accessor: "frame_id",
+      },
+      {
+        Header: "Timestamp",
+        accessor: "timestamp",
+      },
+      {
+        Header: "Time",
+        accessor: "date",
+      },
+      {
+        Header: "Detections",
+        accessor: "detections",
+      },
+    ],
+    []
+  );
 
   const {
     getTableProps,
@@ -79,7 +202,7 @@ function Event() {
     pageCount,
   } = useTable(
     { 
-      columns:headers,
+      columns, 
       data: messages, 
       initialState: { pageIndex: 0, pageSize: 50 } 
     },
@@ -108,57 +231,10 @@ function Event() {
       ...formData,
       [name]: value,
     });
-    
   };
 
   const handleSubmit = (e) => {
     console.log('submit called');
-    //Logic to find index of  current Analytics from JSON DATA
-    const currentAnalytics=formData.analytics
-    const analyticsDataObject=mapping[`${currentAnalytics}`]
-    const columns = analyticsDataObject["headers"].split(',');
-    const accessors = analyticsDataObject["accessor"].split(',');
-    console.log("Print after Submit",columns)
-    // const tableData = useMemo(() => {
- 
-    //   const data = columns.map((header, index) => ({
-    //     Header:header,
-    //     accessor: accessors[index]
-    //   }));
-  
-    //   return data;
-    // }, []);
-    const data= columns.map((columnName,index)=>{
-
-      if(accessors[index]==="crowd_detected" || accessors[index]==="scene_change" 
-        || accessors[index] === "fire_detected" || accessors[index] === "object_missing")
-      {
-        return ({
-          Header:columnName,         
-          accessor : accessors[index],
-          Cell: ({ value }) => <span>{value ? "Yes" : "No"}</span>,
-        })
-      } 
-      console.log("column mapping:",accessors[index])
-      if(accessors[index]==="detections" || accessors[index]==="abandoned_object_ids" 
-      || accessors[index]==="park_detected_ids" || accessors[index]==="detections")
-      {
-        return ({
-          Header:columnName,         
-          accessor : accessors[index],
-          Cell: ({ value }) => <span>{JSON.stringify(value)}</span>,
-        })
-      }
-      
-      return ({
-        Header:columnName,         
-        accessor : accessors[index],
-
-      })
-    });
-    console.log("THis is data being set in headers",data)
-    setHeaders(data);
-    // })
     e.preventDefault();
     postData();
   }
@@ -310,8 +386,7 @@ function Event() {
           <div className="wrapper">
             <div className="table_container">
               <table {...getTableProps()}>
-
-              <thead>
+                <thead>
                   {headerGroups.map((headerGroup) => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
                       {headerGroup.headers.map((column) => (
@@ -322,8 +397,6 @@ function Event() {
                     </tr>
                   ))}
                 </thead>
-                
-                
                 <tbody {...getTableBodyProps()}>
                   {page.map((row) => {
                     prepareRow(row);
