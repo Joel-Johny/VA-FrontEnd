@@ -5,51 +5,18 @@ import { useTable, usePagination } from "react-table";
 import { toast } from "react-toastify";
 
 function Event() {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState({headers:[],rowData:[]});
   const [sourceOptions, setSourceOptions] = useState(null);
-  const [headers, setHeaders] = useState(null);
 
   // get headers from json key from the socket then prepare column and update header
 
-
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: "Sr.",
-        accessor: (row, index) => index + 1, // Add 1 to index to start from 1
-      },
-      {
-        Header: "Source",
-        accessor: "source_id",
-      },
-      {
-        Header: "Name",
-        accessor: "source_name",
-      },
-      {
-        Header: "Frame",
-        accessor: "frame_id",
-      },
-      {
-        Header: "Timestamp",
-        accessor: "timestamp",
-      },
-      {
-        Header: "Time",
-        accessor: "date",
-      },
-      {
-        Header: "Crowd Detected?",
-        accessor: "crowd_detected",
-        Cell: ({ value }) => <span>{value ? "Yes" : "No"}</span>,
-      },
-      {
-        Header: "Person in ROI",
-        accessor: "person_in_roi",
-      },
-    ],
-    []
-  );
+  const columns =useMemo(()=>{
+    return messages.headers.map((header) => ({
+      Header: header,
+      accessor: header,
+    }));
+  },[])
+ 
 
   const {
     getTableProps,
@@ -65,7 +32,7 @@ function Event() {
     canPreviousPage, // Boolean indicating if there is a previous page
     pageCount,
   } = useTable(
-    { columns, data: messages, initialState: { pageIndex: 0, pageSize: 50 } },
+    { columns, data: messages.rowData, initialState: { pageIndex: 0, pageSize: 50 } },
     //data : messages; here messages also columns is expected to be a list hence you have to initalize it to a empty [] and no null
     usePagination
   );
@@ -156,16 +123,26 @@ function Event() {
     try {
       const response = await axios.post(url, json);
       toast("Messages are getting loaded ", { position: "bottom-center" });
-      console.log(response);
+      // console.log(response);
 
       if (response.status) {
         socketRef.current = socketIOClient(ENDPOINT);
         // Listen for 'kafka_msg_data' events
         socketRef.current.on("kafka_msg_data_for_em", (data) => {
           // Handle the received data (e.g., update the messages state)
-          console.log(data);
+          // console.log("this is data",data);
+          console.log(data)
 
-          setMessages((prevMessages) => [data,...prevMessages]);
+          const headerList=Object.keys(data)
+          console.log(headerList);
+          const rowList=[data, ...messages.rowData]
+          const updatedMessages = {
+            headers: headerList,
+            rowData: rowList,
+          };
+          
+          setMessages(updatedMessages)
+          // console.log(updatedMessages);
         });
       }
       const responseData = response.data; // Axios already parses the JSON response
@@ -241,7 +218,7 @@ function Event() {
         </form>
       </div>
 
-      {messages.length > 0 && (
+      {messages.rowData.length > 0 && (
         <div>
           <div className="wrapper">
             <div className="table_container">

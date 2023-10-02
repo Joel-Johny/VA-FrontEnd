@@ -83,7 +83,7 @@ function DeleteAnalytics() {
             <option value="vehicle_stoppage">Vehicle Stoppage</option>
             <option value="object_abandoned">Abandoned Object</option>
             <option value="fire_detection">Fire Detection</option>
-            <option value="scence_change">Scene Changed</option>
+            <option value="scene_change">Scene Changed</option>
             <option value="object_theft">Object Theft</option>
           </select>
         </div>

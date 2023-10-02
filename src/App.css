@@ -144,6 +144,18 @@ li{list-style: none;}
 .canvas-btn-container{
   display: flex;
   gap: 20px;
+  padding-top: 16px;
+}
+
+.canvas-btn-container button {
+  background-color: #3f51b5;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 10px 20px;
+  width: 100%;
 }
 .canvas{height: 640px;width: 640px;}
 

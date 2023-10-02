@@ -5,6 +5,7 @@ import axios from "axios";
 import socketIOClient from "socket.io-client";
 import { toast } from "react-toastify";
 import { v4 as uid } from "uuid";
+import NullCanvas from "./NullCanvas";
 
 function AnalyticsConfig() {
   const ENDPOINT = "http://localhost:5000"; // Replace with your Flask server's URL
@@ -54,33 +55,91 @@ function AnalyticsConfig() {
     setLineDetails(formatedLineDetails);
   };
 
+  const delay = ms => new Promise(
+    resolve => setTimeout(resolve, ms)
+  );
+
   const handleChangeAnalytics = (e) => {
     const { name, value } = e.target;
-    console.log(name,value)
     setFormData({
       ...formData,
       [name]: value,
     });
     setLineDetails([]);
-    setRegionDetails([]);
+    setRegionDetails  ([]);
 
-    console.log("Calling getImage making a get request....");
-    getImage();
-    setRoiDetails(staticObject);
+    // setRoiDetails(staticObject);
   };
 
   async function getImage() {
+    console.log(formData)
+    if (formData.sourceId === '' || formData.analytics === '') 
+    {
+      toast.error("Please select source and analytics", { position: "bottom-center" });
+      console.log("form source is null")
+      return
+    }
+      
     const url = "http://localhost:5000/ac/get_image"; // ORG : http://localhost:5000/ac/get_image
     const data_to_send = {
       "sourceId": formData.sourceId.split(',')[0].split(':')[1].trim(),
       "analytics": formData.analytics
     }
+    console.log("data_to_send for image : ", data_to_send)
     try {
+      toast.info("Loading image snapshot", { autoClose: 1000, position: "bottom-center" });
       const response = await axios.post(url, data_to_send);
       setImageData(response.data.status_message.base64_url);
     } catch (error) {
       // Handle errors here
       console.error("Axios error:", error);
+    }
+  }
+
+  async function getAcConfig() {
+    console.log(formData)
+    console.log("get config")
+    if (formData.sourceId === '' || formData.analytics === '') 
+    {
+      toast.error("Please select source and analytics", { position: "bottom-center" });
+      console.log("form source is null")
+      return
+    }
+
+    const url = "http://localhost:5000/ac/get_config";
+    const data_to_send = {
+      "sourceId": formData.sourceId.split(',')[0].split(':')[1].trim(),
+      "analytics": formData.analytics
+    }
+    console.log(data_to_send);
+    try {
+      const response = await axios.post(url, data_to_send);
+      const responseData = response.data; // Axios already parses the JSON response
+      console.log(responseData.status_code)
+      const jsonString = JSON.parse(responseData.status_message);
+      console.log("JsonString : ", jsonString);
+
+      if (responseData.status_code === 200)
+      {
+        setRoiDetails(jsonString);
+      }
+      else
+      {
+        console.log("failed to get config")
+        toast.info(jsonString.message, { position: "bottom-center" });
+      }
+      
+      // const get_list = jsonString.map((object) => {
+      //   return `SourceId : ${object.source_id} , Name : ${object.source_name}`
+      //   // return object.source_id;
+      // });
+      // // console.log(get_list)
+      // setSourceOptions(get_list);
+      // Handle the JSON response data here
+    } catch (error) {
+      // Handle errors here
+      console.error("Axios error:", error);
+      toast.error("Please update streaming server!", { position: "bottom-center" });
     }
   }
 
@@ -108,7 +167,19 @@ function AnalyticsConfig() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // setLineDetails([])
+    // setRegionDetails([])
+    
     console.log("Form submitted with data:", formData);
+  };
+
+  const handleGetConfig = (e) => {
+    e.preventDefault();
+    console.log("getting configuration")
+    getImage();
+    setLineDetails([])
+    setRegionDetails([])
+    getAcConfig();
   };
 
   const handleChangeLineName = (e, index) => {
@@ -167,10 +238,13 @@ function AnalyticsConfig() {
               <option value="vehicle_stoppage">Vehicle Stoppage</option>
               <option value="object_abandoned">Abandoned Object</option>
               <option value="fire_detection">Fire Detection</option>
-              <option value="scence_change">Scene Changed</option>
+              <option value="scene_change">Scene Changed</option>
               <option value="object_theft">Object Theft</option>
             </select>
           </div>
+          <div className="canvas-btn-container">
+          <button onClick={handleGetConfig}>Get Config</button>
+        </div>
         </form>
         {/* TABLE FOR LINE  */}
         {lineDetails.length > 0 && (
@@ -239,6 +313,13 @@ function AnalyticsConfig() {
           regionNames={regionDetails}
           setRegionNames={setRegionDetails}
         />
+        ) : formData.analytics === "crowd" ? (
+          <RegionCanvas
+          base64Image={imageData}
+          formData={formData}
+          regionNames={regionDetails}
+          setRegionNames={setRegionDetails}
+          />
         ) : formData.analytics === "trespassing" ? (
           <LineCanvas
             base64Image={imageData}
@@ -246,13 +327,11 @@ function AnalyticsConfig() {
             lineDetails={lineDetails}
             setLineDetails={setLineDetails}
           />
-        ) : formData.analytics === "crowd" ? (
-          <RegionCanvas
+        ) : formData.analytics === "object_abandoned" ? (
+          <NullCanvas
           base64Image={imageData}
           formData={formData}
-          regionNames={regionDetails}
-          setRegionNames={setRegionDetails}
-        />
+          />
         ) : formData.analytics === "vehicle_crossing" ? (
           <LineCanvas
             base64Image={imageData}
@@ -266,6 +345,16 @@ function AnalyticsConfig() {
           formData={formData}
           regionNames={regionDetails}
           setRegionNames={setRegionDetails}
+          />
+        ) : formData.analytics === "fire_detection" ? (
+          <NullCanvas
+          base64Image={imageData}
+          formData={formData}
+          />
+        )  : formData.analytics === "scene_change" ? (
+          <NullCanvas
+          base64Image={imageData}
+          formData={formData}
           />
         ) : formData.analytics === "object_theft" ? (
           <RegionCanvas

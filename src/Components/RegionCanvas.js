@@ -137,11 +137,11 @@ function RegionCanvas({base64Image,formData,regionNames,setRegionNames}) {
     // const formattedDate = currentDateTime.toLocaleDateString(undefined, options);
 
     const json = {
-      cameraid: formData.sourceId,
+      cameraid: formData.sourceId.split(',')[0].split(':')[1].trim(),
       analytics: formData.analytics,
       roi: roi_List
     };
-    console.log(json);
+    console.log(json)
     postData(json)
   };
 
